@@ -16,7 +16,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const navItems = ['Home', 'About', 'Classes', 'Trainers', 'Contact'];
+const navItems = ['Home', 'About','Gallery', 'Classes', 'Trainers', 'Contact'];
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
