@@ -1,9 +1,16 @@
 "use client";
-import React, { useEffect, useState, Component } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Typography, Box, Button, Link, Grid } from "@mui/material";
-import TextField from "@mui/material/TextField";
-import { IconButton } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Button,
+  Link,
+  Grid,
+  TextField,
+  IconButton,
+  Paper,
+} from "@mui/material";
 import Image from "next/image";
 
 export default function LoginPage() {
@@ -18,7 +25,7 @@ export default function LoginPage() {
   const [passwordError, setPasswordError] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const validatePassword = (password:any) => {
+  const validatePassword = (password: any) => {
     const isValid =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
         password
@@ -61,7 +68,7 @@ export default function LoginPage() {
     }
   };
 
-  const handlePasswordChange = (e:any) => {
+  const handlePasswordChange = (e: any) => {
     const password = e.target.value;
     setUser((prevUser) => ({
       ...prevUser,
@@ -74,207 +81,169 @@ export default function LoginPage() {
     setShowPassword(!showPassword);
   };
 
-  const handleMouseDownPassword = (event:any) => {
+  const handleMouseDownPassword = (event: any) => {
     event.preventDefault();
   };
 
-  
   const errorMessageStyle = {
     color: "red",
+    marginTop: "10px",
+    fontSize: "0.85rem",
   };
+
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <Grid container>
-        <Grid item xs={12} md={4} order={{ xs: 2, md: 1 }}>
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: { xs: "30px" },
-              height: { xs: "100vh", md: "90%" },
-              padding: "0 20px",
+    <Box
+    component="main"
+    sx={{
+        position: "absolute",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        background: `url('/bgimage.jpg') center/cover no-repeat`,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backdropFilter: "blur(8px)",
+    }}
+    >
+      <Paper
+        elevation={6}
+        sx={{
+          width: { xs: "100%", sm: "380px" },
+          padding: 4,
+          borderRadius: 4,
+          bgcolor: "rgba(255, 255, 255, 0.85)",
+          boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
+        }}
+      >
+        <Box display="flex" justifyContent="center" mb={0}>
+          <Image src="/logogym.png" alt="logo" width={140} height={120} />
+        </Box>
+
+        <Typography
+          variant="h5"
+          fontWeight="bold"
+          color="black"
+          textAlign="center"
+          mb={1}
+        >
+          Welcome to IronTribe
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          color="black"
+          textAlign="center"
+          mb={3}
+        >
+          Log in to proceed with your fitness journey
+        </Typography>
+
+        <form>
+          <TextField
+            color="success"
+            label="Email"
+            name="emailid"
+            type="email"
+            fullWidth
+            size="small"
+            value={user.emailid}
+            onChange={handleEmailChange}
+            error={!!user.emailError}
+            helperText={user.emailError}
+            margin="normal"
+          />
+
+          <TextField
+            label="Password"
+            color="success"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            fullWidth
+            size="small"
+            value={user.password}
+            onChange={handlePasswordChange}
+            error={!!passwordError}
+            helperText={passwordError}
+            margin="normal"
+            InputProps={{
+              endAdornment: (
+                <IconButton
+                  onClick={handleClickShowPassword}
+                  onMouseDown={handleMouseDownPassword}
+                  edge="end"
+                >
+                  {/* You can import and use Visibility icons here */}
+                </IconButton>
+              ),
             }}
+          />
+
+          {errorMessage && (
+            <div style={errorMessageStyle}>{errorMessage}</div>
+          )}
+
+          <Button
+            variant="contained"
+            color="primary"
+            fullWidth
+            disabled={buttonDisabled}
+            type="submit"
+            sx={{ mt: 2, fontWeight: "bold", py: 1.5 }}
           >
-            <Image src="/Logo.svg" alt="logo" width={300} height={160} />
+            Submit
+          </Button>
+        </form>
 
-            <Typography
-              variant="h5"
-              fontWeight="600"
-              color="#0024E0"
-              textAlign="center"
-              fontFamily="Poppins,Sans-serif"
-            >
-              Welcome to IronTribe
-            </Typography>
-            <Typography
-              variant="h6"
-              color="#0024E0"
-              textAlign="center"
-              fontFamily="Poppins,Sans-serif"
-            >
-              Log in to proceed with your fitness journey
-            </Typography>
+        <Box textAlign="right" mt={1}>
+          <Link href="/forgot-password" underline="hover" color="primary">
+            Forgot password?
+          </Link>
+        </Box>
 
-            <Box sx={{ width: "80%" }}>
-              <form>
-                <TextField
-                  placeholder="Enter Email Id"
-                  label="Email id"
-                  name="emailid"
-                  size="small"
-                  required
-                  focused
-                  type="email"
-                  value={user.emailid}
-                  onChange={handleEmailChange}
-                  fullWidth
-                  helperText={
-                    user.emailError ? (
-                      <span style={{ color: "red" }}>{user.emailError}</span>
-                    ) : (
-                      ""
-                    )
-                  }
-                  margin="normal"
-                />
+        <Typography
+          variant="subtitle2"
+          align="center"
+          mt={3}
+          fontWeight={500}
+          color="primary"
+        >
+          or login with
+        </Typography>
 
-                <TextField
-                  focused
-                  sx={{
-                    height: "45px",
-                    borderRadius: "5px",
-                    marginBottom: passwordError ? "75px" : "0",
-                  }}
-                  placeholder="Password"
-                  label="Password"
-                  name="password"
-                  size="small"
-                  required
-                  type={showPassword ? "text" : "password"}
-                  InputProps={{
-                    endAdornment: (
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                      >
-                      </IconButton>
-                    ),
-                  }}
-                  value={user.password}
-                  onChange={(e) => {
-                    const password = e.target.value;
-                    validatePassword(password);
-                    setUser({ ...user, password: e.target.value });
-                  }}
-                  fullWidth
-                  margin="normal"
-                  error={!!passwordError}
-                  helperText={passwordError}
-                />
-                {errorMessage && (
-                  <span className="error-message" style={errorMessageStyle}>
-                    {errorMessage}
-                  </span>
-                )}
+        <Button
+          variant="contained"
+          fullWidth
+          sx={{
+            mt: 2,
+            backgroundColor: "#000000",
+            "&:hover": { backgroundColor: "#808080" },
+            textTransform: "none",
+            fontWeight: 500,
+          }}
+        >
+          Login with Google
+        </Button>
 
-                <Button
-                  variant="contained"
-                  type="submit"
-                  disabled={buttonDisabled}
-                  sx={{
-                    boxShadow: 1,
-                    maxWidth: "100%",
-                    height: "41px",
-                    width: "100%",
-                    fontWeight: "800",
-                    fontFamily: "Poppins,Sans-serif",
-                    color: "white",
-                  }}
-                >
-                  Submit
-                </Button>
-              </form>
-              <Typography
-                sx={{ textAlign: "end", color: "rgba(0, 36, 224, 1)" }}
-              >
-                <Link
-                  component="a"
-                  href="/forgot-password"
-                  sx={{ cursor: "pointer" }}
-                >
-                  forgot password
-                </Link>
-              </Typography>
+        <Box textAlign="center" mt={3}>
+          <Typography variant="body2">
+            Don’t have an account?{" "}
+            <Link href="/signup" underline="hover" fontWeight="bold">
+              Sign Up
+            </Link>
+          </Typography>
+        </Box>
 
-              <Typography
-                variant="h6"
-                align="center"
-                marginTop={1}
-                fontWeight={600}
-                sx={{ color: "blue" }}
-              >
-                or login with
-              </Typography>
-              <Box
-                marginTop={"5px"}
-                display={"flex"}
-                flexDirection={"column"}
-                gap={"15px"}
-                sx={{ width: "100%" }}
-              >
-                <Button
-                  variant="contained"
-                  sx={{
-                    height: 41,
-                    fontSize: 16,
-                    fontWeight: 400,
-                    textTransform: "none",
-                    borderRadius: "5px",
-                    background: "#FF3E30",
-                    "&:hover": { background: "#FF3E30" },
-                  }}
-                >
-                  Login with Google
-                </Button>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                display: "block",
-                textAlign: "center",
-                marginTop: { xs: "20px", md: "15px" },
-              }}
-            >
-              Don&#39;t have an Account ?
-              <Link
-                href="/signup"
-                sx={{ "& .MuiTypography-root": { fontWeight: "bold" } }}
-              >
-                Sign Up
-              </Link>
-            </Box>
-          </Box>
-
-          <Box
-            sx={{
-              backgroundColor: "#f0f0f0",
-              textAlign: "center",
-              padding: "10px 0",
-            }}
-          >
-            <Typography
-              color="#555"
-              sx={{ fontSize: "10px", fontFamily: "poppins" }}
-            >
-              © 2009-2024 -IronTribe | All Rights Reserved |
-              Privacy Policy
-            </Typography>
-          </Box>
-        </Grid>
-      </Grid>
+        <Typography
+          variant="caption"
+          display="block"
+          textAlign="center"
+          color="text.secondary"
+          mt={3}
+        >
+          © 2009-2024 IronTribe | All Rights Reserved | Privacy Policy
+        </Typography>
+      </Paper>
     </Box>
   );
-};
+}
