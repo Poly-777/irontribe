@@ -11,7 +11,7 @@ const AboutUs = () => {
     <Navbar/>
 
     <Container>
-      <Box sx={{ pt: 8, textAlign: 'center' }}>
+      <Box sx={{ pt: 8, textAlign: 'center',marginTop:5 }}>
         <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
           About IronTribe Gym
         </Typography>

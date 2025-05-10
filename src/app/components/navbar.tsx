@@ -1,4 +1,5 @@
 'use client';
+
 import React, { useState } from 'react';
 import {
   AppBar,
@@ -15,11 +16,13 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-const navItems = ['Home', 'About','Gallery', 'Classes', 'Trainers', 'Contact'];
+const navItems = ['Home', 'About', 'Gallery', 'pricing', 'Trainers', 'Contact'];
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -31,25 +34,31 @@ export default function Navbar() {
         IronTribe Gym
       </Typography>
       <List>
-        {navItems.map((item) => (
-          <ListItem key={item} disablePadding>
-            <ListItemText
-              primary={
-                <Link
-                  href={`/${item.toLowerCase()}`}
-                  style={{
-                    textDecoration: 'none',
-                    color: 'inherit',
-                    padding: '1rem',
-                    display: 'block',
-                  }}
-                >
-                  {item}
-                </Link>
-              }
-            />
-          </ListItem>
-        ))}
+        {navItems.map((item) => {
+          const itemPath = `/${item.toLowerCase()}`;
+          const isActive = pathname === itemPath;
+
+          return (
+            <ListItem key={item} disablePadding>
+              <ListItemText
+                primary={
+                  <Link
+                    href={itemPath}
+                    style={{
+                      textDecoration: 'none',
+                      color: isActive ? '#f44336' : 'inherit',
+                      padding: '1rem',
+                      display: 'block',
+                      fontWeight: isActive ? 'bold' : 'normal',
+                    }}
+                  >
+                    {item}
+                  </Link>
+                }
+              />
+            </ListItem>
+          );
+        })}
       </List>
     </Box>
   );
@@ -75,39 +84,44 @@ export default function Navbar() {
           </Box>
 
           <Box sx={{ display: { xs: 'none', sm: 'block' }, ml: 'auto' }}>
-            {navItems.map((item) => (
-              <Button
-                key={item}
-                component={Link}
-                href={`/${item.toLowerCase()}`}
-                sx={{
-                  color: '#fff',
-                  mx: 1,
-                  fontWeight: 'bold',
-                  textTransform: 'uppercase',
-                  position: 'relative',
-                  '&::after': {
-                    content: '""',
-                    position: 'absolute',
-                    width: 0,
-                    height: '2px',
-                    bottom: -2,
-                    left: '50%',
-                    backgroundColor: '#f44336',
-                    transition: 'all 0.3s ease-out',
-                    transform: 'translateX(-50%)',
-                  },
-                  '&:hover::after': {
-                    width: '100%',
-                  },
-                  '&:hover': {
-                    color: '#f44336',
-                  },
-                }}
-              >
-                {item}
-              </Button>
-            ))}
+            {navItems.map((item) => {
+              const itemPath = `/${item.toLowerCase()}`;
+              const isActive = pathname === itemPath;
+
+              return (
+                <Button
+                  key={item}
+                  component={Link}
+                  href={itemPath}
+                  sx={{
+                    color: isActive ? '#f44336' : '#fff',
+                    mx: 1,
+                    fontWeight: 'bold',
+                    textTransform: 'uppercase',
+                    position: 'relative',
+                    '&::after': {
+                      content: '""',
+                      position: 'absolute',
+                      width: isActive ? '100%' : 0,
+                      height: '2px',
+                      bottom: -2,
+                      left: '50%',
+                      backgroundColor: '#f44336',
+                      transition: 'all 0.3s ease-out',
+                      transform: 'translateX(-50%)',
+                    },
+                    '&:hover::after': {
+                      width: '100%',
+                    },
+                    '&:hover': {
+                      color: '#f44336',
+                    },
+                  }}
+                >
+                  {item}
+                </Button>
+              );
+            })}
           </Box>
         </Toolbar>
       </AppBar>

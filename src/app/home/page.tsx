@@ -1,14 +1,10 @@
 'use client';
-
 import React from 'react';
-import Navbar from '../components/navbar';
 import { Box, Typography, Button, Container } from '@mui/material';
-import Image from 'next/image';
 
 export default function HomePage() {
   return (
     <>
-      <Navbar />
       <Box
         sx={{
           height: '90vh',
@@ -21,6 +17,7 @@ export default function HomePage() {
           color: '#fff',
           textAlign: 'center',
           position: 'relative',
+          marginTop:4
         }}
       >
         <Box
@@ -104,7 +101,6 @@ export default function HomePage() {
         </Container>
       </Box>
 
-      {/* Trainers Section */}
       <Box sx={{ py: 8, backgroundColor: '#111', color: '#fff', textAlign: 'center' }}>
         <Container>
           <Typography variant="h4" sx={{ fontWeight: 'bold', mb: 4 }}>

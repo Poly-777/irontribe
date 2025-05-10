@@ -9,7 +9,6 @@ import {
   IconButton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import Navbar from '../components/navbar';
 
 const images = [
   '/bgimage.jpg',
@@ -42,7 +41,6 @@ export default function GalleryPage() {
 
   return (
     <>
-      <Navbar />
       <Container sx={{ py: 6 , marginTop:10}}>
         <Typography variant="h4" align="center" fontWeight="bold" gutterBottom>
           IronTribe Gym Gallery
