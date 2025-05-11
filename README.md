@@ -5,7 +5,7 @@
 
 
 
-TO GET THE DEPENDEMCIES: npm i
+TO GET THE DEPENDENCIES: npm i
 
 First, run the development front-end server:
 
