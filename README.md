@@ -4,6 +4,9 @@
 # Database: postgreSQL
 
 
+
+TO GET THE DEPENDEMCIES: npm i
+
 First, run the development front-end server:
 
 ```bash
