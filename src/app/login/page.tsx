@@ -12,6 +12,7 @@ import {
   Paper,
 } from "@mui/material";
 import Image from "next/image";
+import next from "next";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -90,6 +91,8 @@ export default function LoginPage() {
     marginTop: "10px",
     fontSize: "0.85rem",
   };
+
+    // const handleLogin =  ;
 
   return (
     <Box
@@ -188,10 +191,17 @@ export default function LoginPage() {
             color="primary"
             fullWidth
             disabled={buttonDisabled}
+            onClick={() => {
+      router.push("/home");
+    // Do your login logic here, then redirect:
+    //  router.push("src/app/home");
+  }}
             type="submit"
             sx={{ mt: 2, fontWeight: "bold", py: 1.5 }}
-          >
+          > S
+            {/* <Link href="/home" >
             Submit
+            </Link> */}
           </Button>
         </form>
 
