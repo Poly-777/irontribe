@@ -1,0 +1,15 @@
+.custom-prev-arrow {
+	color: white;
+	position: absolute;
+	top: 50%;
+	left: 15px;
+	z-index: 50;
+}
+
+.custom-next-arrow {
+	color: white;
+	position: absolute;
+	top: 50%;
+	right: 15px;
+	z-index: 50;
+}

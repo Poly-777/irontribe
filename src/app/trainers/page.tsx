@@ -58,8 +58,7 @@ export default function TrainersPage() {
               sm={6}
               md={6}
               key={index}
-              display="flex"
-              justifyContent="center"
+              sx={{ display: 'flex', justifyContent: 'center' }}
             >
               <Card
                 sx={{

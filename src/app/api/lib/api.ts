@@ -63,3 +63,47 @@ async function contactUser(name: any, emailid: any, mobile: any, message: any) {
 
 export {loginUser, signinUser, contactUser };
 
+
+
+// const handleSignup = async (event: any) => {
+  //   event.preventDefault();
+  //   try {
+  //     const data = await signinUser(user.name, user.mobile, user.emailid, user.password);
+  //     if (data.status === 201) {
+  //       localStorage.setItem("emailid", user.emailid || "");
+  //       localStorage.setItem("mobile", user.mobile || "");
+  //       localStorage.setItem("name", user.name || "");
+  //       router.push("/dashboard");
+  //     } else if (data.status === 400) {
+  //       router.push("/signup");
+  //     } else {
+  //       console.error("Unhandled status code:", data.status);
+  //     }
+  //   } catch (error) {
+  //     console.error("Signup failed", error);
+  //   }
+  // };
+
+
+  //  const handleEmailChange = (e: any) => {
+  //   const email = e.target.value;
+  //   if (email === "" || validateEmail(email)) {
+  //     setUser({ ...user, emailid: email, emailError: "" });
+  //   } else {
+  //     setUser({
+  //       ...user,
+  //       emailid: email,
+  //       emailError: "Please enter a valid email address",
+  //     });
+  //   }
+  // };
+
+
+  // const handlePasswordChange = (e: any) => {
+  //   const password = e.target.value;
+  //   setUser((prevUser) => ({
+  //     ...prevUser,
+  //     password: password,
+  //   }));
+  //   validatePassword(password);
+  // };

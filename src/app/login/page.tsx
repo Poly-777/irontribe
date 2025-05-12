@@ -12,6 +12,8 @@ import {
   Paper,
 } from "@mui/material";
 import Image from "next/image";
+import next from "next";
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -91,6 +93,27 @@ export default function LoginPage() {
     fontSize: "0.85rem",
   };
 
+  const handleLogin = (
+    async (e: any) => {
+      e.preventDefault();
+      const { emailid, password } = user;
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ emailid, password }),
+      });
+
+      if (response.ok) {
+        router.push("/home");
+        console.log("Login successful");
+        console.log(`${emailid} ${password}`);
+      } else {
+        setErrorMessage("Invalid email or password");
+      }
+    }) ;
+
   return (
     <Box
     component="main"
@@ -139,7 +162,7 @@ export default function LoginPage() {
           Log in to proceed with your fitness journey
         </Typography>
 
-        <form>
+        <form onSubmit={handleLogin} method="POST">
           <TextField
             color="success"
             label="Email"
@@ -190,13 +213,13 @@ export default function LoginPage() {
             disabled={buttonDisabled}
             type="submit"
             sx={{ mt: 2, fontWeight: "bold", py: 1.5 }}
-          >
+          > 
             Submit
           </Button>
         </form>
 
         <Box textAlign="right" mt={1}>
-          <Link href="/forgot-password" underline="hover" color="primary">
+          <Link href="/forgot" underline="hover" color="primary">
             Forgot password?
           </Link>
         </Box>
