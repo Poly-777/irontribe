@@ -97,24 +97,30 @@ export default function SignupPage() {
     event.preventDefault();
   };
 
-  const handleSignup = async (event: any) => {
-    event.preventDefault();
-    try {
-      const data = await signinUser(user.name, user.mobile, user.emailid, user.password);
-      if (data.status === 201) {
-        localStorage.setItem("emailid", user.emailid || "");
-        localStorage.setItem("mobile", user.mobile || "");
-        localStorage.setItem("name", user.name || "");
-        router.push("/dashboard");
-      } else if (data.status === 400) {
-        router.push("/signup");
-      } else {
-        console.error("Unhandled status code:", data.status);
-      }
-    } catch (error) {
-      console.error("Signup failed", error);
-    }
-  };
+ 
+  const handleSignup = (
+      async (e: any) => {
+        e.preventDefault();
+        const { name,mobile,emailid,password} = user;
+        const response = await fetch("http://localhost:3000/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name,mobile, emailid, password }),
+        });
+  
+        if (response.ok) {
+          router.push("/home");
+          console.log("Login successful");
+          console.log(`${name} ${mobile} ${emailid} ${password}`);
+        } else {
+          setErrorMessage("Invalid email or password");
+        }
+      }) ;
+
+
+
 
   return (
     <Box
@@ -165,7 +171,7 @@ export default function SignupPage() {
           Join IronTribe and start your fitness journey
         </Typography>
 
-        <form onSubmit={handleSignup}>
+        <form onSubmit={handleSignup} method="POST">
           <TextField
             color="success"
             label="Name"
@@ -308,3 +314,7 @@ export default function SignupPage() {
     </Box>
   );
 }
+function setErrorMessage(arg0: string) {
+  throw new Error("Function not implemented.");
+}
+

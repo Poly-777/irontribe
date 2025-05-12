@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import next from "next";
+import { log } from "console";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -92,7 +93,26 @@ export default function LoginPage() {
     fontSize: "0.85rem",
   };
 
-    // const handleLogin =  ;
+  const handleLogin = (
+    async (e: any) => {
+      e.preventDefault();
+      const { emailid, password } = user;
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ emailid, password }),
+      });
+
+      if (response.ok) {
+        router.push("/home");
+        console.log("Login successful");
+        console.log(`${emailid} ${password}`);
+      } else {
+        setErrorMessage("Invalid email or password");
+      }
+    }) ;
 
   return (
     <Box
@@ -142,7 +162,7 @@ export default function LoginPage() {
           Log in to proceed with your fitness journey
         </Typography>
 
-        <form>
+        <form onSubmit={handleLogin} method="POST">
           <TextField
             color="success"
             label="Email"
@@ -191,17 +211,10 @@ export default function LoginPage() {
             color="primary"
             fullWidth
             disabled={buttonDisabled}
-            onClick={() => {
-      router.push("/home");
-    // Do your login logic here, then redirect:
-    //  router.push("src/app/home");
-  }}
             type="submit"
             sx={{ mt: 2, fontWeight: "bold", py: 1.5 }}
-          > S
-            {/* <Link href="/home" >
+          > 
             Submit
-            </Link> */}
           </Button>
         </form>
 

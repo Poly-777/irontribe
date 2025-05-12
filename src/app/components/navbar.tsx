@@ -80,7 +80,7 @@ export default function Navbar() {
           <Box sx={{ flexGrow: 0, display: 'flex', justifyContent: { xs: 'center', sm: 'start' } }}>
             <Link href="/">
               <Image src="/logogym.png" alt="IronTribe Gym" width={80} height={65} />
-            </Link>
+            </Link> 
           </Box>
 
           <Box sx={{ display: { xs: 'none', sm: 'block' }, ml: 'auto' }}>
