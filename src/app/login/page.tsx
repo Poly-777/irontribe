@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import next from "next";
-import { log } from "console";
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -219,7 +219,7 @@ export default function LoginPage() {
         </form>
 
         <Box textAlign="right" mt={1}>
-          <Link href="/forgot-password" underline="hover" color="primary">
+          <Link href="/forgot" underline="hover" color="primary">
             Forgot password?
           </Link>
         </Box>

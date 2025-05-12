@@ -1,8 +1,12 @@
 'use client';
 import React from 'react';
+import { useRouter } from 'next/navigation';
 import { Box, Typography, Button, Container } from '@mui/material';
+import MotionHeadings from '../components/motionHeading';
+
 
 export default function HomePage() {
+  const router = useRouter();
   return (
     <>
       <Box
@@ -21,6 +25,7 @@ export default function HomePage() {
         }}
       >
         <Box
+        
           sx={{
             position: 'absolute',
             top: 0,
@@ -31,14 +36,10 @@ export default function HomePage() {
             zIndex: 1,
           }}
         />
-        <Container sx={{ position: 'relative', zIndex: 2 }}>
-          <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 2 }}>
-            Unleash Your Power
-          </Typography>
-          <Typography variant="h5" sx={{ mb: 4 }}>
-            Join the ultimate training experience
-          </Typography>
+        <Container sx={{ position: 'relative', zIndex: 2 }} >
+          <MotionHeadings title="Unleash Your Power" subtitle="Join the ultimate training experience"/>
           <Button
+          onClick={()=>{ router.push("/login");}}
             variant="contained"
             color="primary"
             size="large"
@@ -139,6 +140,7 @@ export default function HomePage() {
             Ready to Transform Your Body?
           </Typography>
           <Button
+          // onClick={()=>{router.push("/pricing");}}
             variant="contained"
             size="large"
             sx={{ bgcolor: '#fff', color: '#f44336', fontWeight: 'bold' }}

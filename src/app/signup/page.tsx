@@ -9,239 +9,189 @@ import {
   TextField,
   IconButton,
   Paper,
+  Checkbox,
+  FormControlLabel,
+  MenuItem,
+  Select,
+  InputLabel,
+  FormControl,
 } from "@mui/material";
 import Image from "next/image";
-import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
-import { signinUser } from "../api/lib/api";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { v4 as uuidv4 } from "uuid"; // npm install uuid
 
 export default function SignupPage() {
   const router = useRouter();
   const [user, setUser] = React.useState({
+    memberId: uuidv4(),
     name: "",
     mobile: "",
     emailid: "",
     password: "",
+    address: "",
+    dob: "",
+    gender: "",
+    joindate: "",
+    membershipstatus: "",
+    termaccepted: false,
   });
-  const [buttonDisabled, setButtonDisabled] = React.useState(false);
+
+  const [errors, setErrors] = React.useState({
+    name: "",
+    mobile: "",
+    emailid: "",
+    password: "",
+    address: "",
+    dob: "",
+    gender: "",
+    joindate: "",
+    membershipstatus: "",
+    termaccepted: "",
+  });
+
+  const [buttonDisabled, setButtonDisabled] = React.useState(true);
   const [showPassword, setShowPassword] = React.useState(false);
-  const [nameError, setNameError] = React.useState("");
-  const [emailError, setEmailError] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState("");
-  const [mobileError, setMobileError] = React.useState("");
 
-  const validateName = (Name: any) => {
-    const isValid = /^[A-Za-z]+ [A-Za-z]+$/.test(Name);
-    if (!Name || !isValid) {
-      setNameError("Name must have a Firstname and a Lastname - Ex. John Doe");
-    } else {
-      setNameError("");
-    }
-  };
+  const validate = () => {
+    const newErrors: any = {};
 
-  const validateMobile = (mobile: any) => {
-    const isValid = /^\d{10}$/.test(mobile);
-    if (!mobile || !isValid) {
-      setMobileError("Mobile number must be 10 digits long.");
-    } else {
-      setMobileError("");
-    }
-  };
+    if (!/^[A-Za-z]+ [A-Za-z]+$/.test(user.name))
+      newErrors.name = "Enter full name (first and last)";
+    if (!/^\d{10}$/.test(user.mobile))
+      newErrors.mobile = "Mobile number must be 10 digits";
+    if (
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(user.emailid)
+    )
+      newErrors.emailid = "Invalid email address";
+    if (
+      !/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/.test(
+        user.password
+      )
+    )
+      newErrors.password =
+        "Password must be 8+ chars, include uppercase, lowercase, digit & special character";
+    if (!user.address) newErrors.address = "Address is required";
+    if (!user.dob) newErrors.dob = "Date of Birth is required";
+    if (!user.gender) newErrors.gender = "Gender is required";
+    if (!user.joindate) newErrors.joindate = "Join Date is required";
+    if (!user.membershipstatus)
+      newErrors.membershipstatus = "Select membership status";
+    // if (!user.termaccepted)
+    //   newErrors.termaccepted = "Accept the terms and conditions.";   
 
-  const validateEmail = (emailid: any) => {
-    const isValid = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(emailid);
-    if (!emailid || !isValid) {
-      setEmailError("Please enter a valid email address");
-    } else {
-      setEmailError("");
-    }
-  };
-
-  const validatePassword = (password: any) => {
-    const isValid = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(password);
-    if (!password || !isValid) {
-      setPasswordError(
-        "Password must:\n" +
-        "- Be at least 8 characters long\n" +
-        "- Contain at least one uppercase letter\n" +
-        "- Contain at least one lowercase letter\n" +
-        "- Contain at least one digit\n" +
-        "- Contain at least one special character (e.g., !@#$%^&*)"
-      );
-    } else {
-      setPasswordError("");
-    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   useEffect(() => {
-    if (
-      !nameError &&
-      !mobileError &&
-      !emailError &&
-      !passwordError &&
-      user.name &&
-      user.mobile &&
-      user.emailid &&
-      user.password
-    ) {
-      setButtonDisabled(false);
+    setButtonDisabled(!validate());
+  }, [user]);
+
+  const handleSignup = async (e: any) => {
+    e.preventDefault();
+    if (!validate()) return;
+
+    const response = await fetch("http://localhost:3000/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+
+    if (response.ok) {
+      router.push("/home");
+      console.log("Signup successful", user);
     } else {
-      setButtonDisabled(true);
+      alert("Signup failed. Try again.");
     }
-  }, [nameError, mobileError, emailError, passwordError, user]);
-
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
   };
-
-  const handleMouseDownPassword = (event: any) => {
-    event.preventDefault();
-  };
-
- 
-  const handleSignup = (
-      async (e: any) => {
-        e.preventDefault();
-        const { name,mobile,emailid,password} = user;
-        const response = await fetch("http://localhost:3000/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name,mobile, emailid, password }),
-        });
-  
-        if (response.ok) {
-          router.push("/home");
-          console.log("Login successful");
-          console.log(`${name} ${mobile} ${emailid} ${password}`);
-        } else {
-          setErrorMessage("Invalid email or password");
-        }
-      }) ;
-
-
-
 
   return (
     <Box
-    component="main"
-    sx={{
+      component="main"
+      sx={{
         position: "absolute",
         top: 0,
         left: 0,
         width: "100%",
-        height: "120%",
+        height: "auto",
+        minHeight: "100vh",
         background: `url('/bgimage.jpg') center/cover no-repeat`,
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         backdropFilter: "blur(8px)",
-    }}
+        py: 4,
+      }}
     >
-
       <Paper
         elevation={6}
         sx={{
-          width: { xs: "100%", sm: "380px" },
+          width: { xs: "100%", sm: "500px" },
           padding: 4,
           borderRadius: 4,
           bgcolor: "rgba(255, 255, 255, 0.85)",
-          boxShadow: "0 8px 30px rgba(0,0,0,0.12)",
         }}
       >
-        <Box display="flex" justifyContent="center" mb={0}>
-          <Image src="/logogym.png" alt="logo" width={140} height={120} />
+        <Box display="flex" justifyContent="center" mb={2}>
+          <Image
+  src="/logogym.png"
+  alt="logo"
+  width={140}
+  height={120}
+  style={{
+    mixBlendMode: "multiply", // tries to blend the background
+    backgroundColor: "transparent",
+  }}
+/>
         </Box>
 
-        <Typography
-          variant="h5"
-          fontWeight="bold"
-          color="black"
-          textAlign="center"
-          mb={1}
-        >
+        <Typography variant="h5" textAlign="center" fontWeight="bold" mb={2}>
           Create an Account
         </Typography>
-        <Typography
-          variant="subtitle1"
-          color="black"
-          textAlign="center"
-          mb={3}
-        >
-          Join IronTribe and start your fitness journey
-        </Typography>
 
-        <form onSubmit={handleSignup} method="POST">
+        <form onSubmit={handleSignup}>
           <TextField
-            color="success"
-            label="Name"
-            name="Name"
-            size="small"
+            label="Full Name"
             value={user.name}
-            onChange={(e) => {
-              const Name = e.target.value;
-              validateName(Name);
-              setUser({ ...user, name: Name });
-            }}
+            onChange={(e) => setUser({ ...user, name: e.target.value })}
+            error={!!errors.name}
+            helperText={errors.name}
             fullWidth
-            margin="normal"
-            error={!!nameError}
-            helperText={nameError}
+            margin="dense"
           />
           <TextField
-            label="Mobile No"
-            color="success"
-            name="Mobile"
-            size="small"
+            label="Mobile"
             value={user.mobile}
-            onChange={(e) => {
-              const mobile = e.target.value;
-              validateMobile(mobile);
-              setUser({ ...user, mobile });
-            }}
+            onChange={(e) => setUser({ ...user, mobile: e.target.value })}
+            error={!!errors.mobile}
+            helperText={errors.mobile}
             fullWidth
-            margin="normal"
-            error={!!mobileError}
-            helperText={mobileError}
+            margin="dense"
           />
           <TextField
-            label="Email id"
-            color="success"
-            name="emailid"
-            type="email"
-            size="small"
+            label="Email"
             value={user.emailid}
-            onChange={(e) => {
-              const email = e.target.value;
-              validateEmail(email);
-              setUser({ ...user, emailid: email });
-            }}
+            onChange={(e) => setUser({ ...user, emailid: e.target.value })}
+            error={!!errors.emailid}
+            helperText={errors.emailid}
             fullWidth
-            margin="normal"
-            error={!!emailError}
-            helperText={emailError}
+            margin="dense"
           />
           <TextField
             label="Password"
-            color="success"
-            name="password"
             type={showPassword ? "text" : "password"}
-            size="small"
             value={user.password}
-            onChange={(e) => {
-              const password = e.target.value;
-              validatePassword(password);
-              setUser({ ...user, password });
-            }}
+            onChange={(e) => setUser({ ...user, password: e.target.value })}
+            error={!!errors.password}
+            helperText={errors.password}
             fullWidth
-            margin="normal"
-            error={!!passwordError}
-            helperText={passwordError}
+            margin="dense"
             InputProps={{
               endAdornment: (
                 <IconButton
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
+                  onClick={() => setShowPassword(!showPassword)}
                   edge="end"
                 >
                   {showPassword ? <Visibility /> : <VisibilityOff />}
@@ -249,72 +199,120 @@ export default function SignupPage() {
               ),
             }}
           />
+          <TextField
+            label="Address"
+            value={user.address}
+            onChange={(e) => setUser({ ...user, address: e.target.value })}
+            error={!!errors.address}
+            helperText={errors.address}
+            fullWidth
+            margin="dense"
+          />
+          <TextField
+            label="Date of Birth"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={user.dob}
+            onChange={(e) => setUser({ ...user, dob: e.target.value })}
+            error={!!errors.dob}
+            helperText={errors.dob}
+            fullWidth
+            margin="dense"
+          />
+          <FormControl fullWidth margin="dense" error={!!errors.gender}>
+            <InputLabel>Gender</InputLabel>
+            <Select
+              value={user.gender}
+              onChange={(e) => setUser({ ...user, gender: e.target.value })}
+              label="Gender"
+            >
+              <MenuItem value="male">Male</MenuItem>
+              <MenuItem value="female">Female</MenuItem>
+              <MenuItem value="other">Other</MenuItem>
+            </Select>
+            <Typography variant="caption" color="error">
+              {errors.gender}
+            </Typography>
+          </FormControl>
+          <TextField
+            label="Join Date"
+            type="date"
+            InputLabelProps={{ shrink: true }}
+            value={user.joindate}
+            onChange={(e) => setUser({ ...user, joindate: e.target.value })}
+            error={!!errors.joindate}
+            helperText={errors.joindate}
+            fullWidth
+            margin="dense"
+          />
+          <FormControl fullWidth margin="dense" error={!!errors.membershipstatus}>
+            <InputLabel>Membership Status</InputLabel>
+            <Select
+              value={user.membershipstatus}
+              onChange={(e) =>
+                setUser({ ...user, membershipstatus: e.target.value })
+              }
+              label="Membership Status"
+            >
+              <MenuItem value="New">New</MenuItem>
+              <MenuItem value="Old">Old</MenuItem>
+              <MenuItem value="pending">Pending</MenuItem>
+            </Select>
+            <Typography variant="caption" color="error">
+              {errors.membershipstatus}
+            </Typography>
+          </FormControl>
+
+          <Box display="flex" alignItems="center" mt={2}>
+            <Checkbox
+              checked={user.termaccepted}
+              onChange={(e) =>
+                setUser({ ...user, termaccepted: e.target.checked })
+              }
+              color="primary"
+            />
+            <Typography variant="body2" sx={{ ml: 1 }}>
+            I agree to the <Link>terms and conditions.</Link>
+          </Typography>
+          {/* {errors.termaccepted && (
+            <Typography variant="caption" sx={{ ml:1 }} color="error">
+              {errors.termaccepted}
+            </Typography>
+          )} */}
+          </Box>
+          
 
           <Button
             variant="contained"
-            color="primary"
             fullWidth
-            disabled={buttonDisabled}
             type="submit"
-            sx={{ mt: 2, fontWeight: "bold", py: 1.5 }}
-          >
-            Submit
-          </Button>
-        </form>
-
-        <Box textAlign="right" mt={1}>
-          <Link href="/forgot-password" underline="hover" color="primary">
-            Forgot password?
-          </Link>
-        </Box>
-
-        <Typography
-          variant="subtitle2"
-          align="center"
-          mt={3}
-          fontWeight={500}
-          color="primary"
-        >
-          or sign up with
-        </Typography>
-
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{
-            mt: 2,
-            backgroundColor: "#000000",
+            disabled={buttonDisabled}
+            sx={{ mt: 2,backgroundColor: "#000000",
             "&:hover": { backgroundColor: "#808080" },
             textTransform: "none",
-            fontWeight: 500,
-          }}
-        >
-          Sign up with Google
-        </Button>
-
-        <Box textAlign="center" mt={3}>
-          <Typography variant="body2">
-            Already have an account?{" "}
-            <Link href="/login" underline="hover" fontWeight="bold">
-              Login
-            </Link>
-          </Typography>
-        </Box>
-
-        <Typography
-          variant="caption"
-          display="block"
-          textAlign="center"
-          color="text.secondary"
-          mt={3}
-        >
-          © 2009-2024 IronTribe | All Rights Reserved | Privacy Policy
-        </Typography>
+            fontWeight: 500, }}
+          >
+            Register
+          </Button>
+        </form>
       </Paper>
     </Box>
   );
 }
-function setErrorMessage(arg0: string) {
-  throw new Error("Function not implemented.");
-}
 
+
+
+
+
+  //           <Box
+  //   sx={{
+  //     position: "absolute",
+  //     top: 0,
+  //     left: 0,
+  //     right: 0,
+  //     bottom: 0,
+  //     backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: Dark overlay to enhance blur effect
+  //     backdropFilter: "blur(12px)", // Apply blur effect
+  //     zIndex: -1, // Ensures the blur stays in the background
+  //   }}
+  // />
