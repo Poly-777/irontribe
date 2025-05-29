@@ -12,6 +12,7 @@ import {
   Paper,
 } from "@mui/material";
 import Image from "next/image";
+import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,7 +20,7 @@ export default function LoginPage() {
     emailid: "",
     password: "",
     emailError: "",
-  });
+  }); 
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
@@ -91,6 +92,26 @@ export default function LoginPage() {
     fontSize: "0.85rem",
   };
 
+  const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const res = await fetch("/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(user),
+  });
+
+  const data = await res.json();
+
+  if (res.ok) {
+    alert("Login successful!");
+    router.push("/home");
+  } else {
+    alert(data.error || "Login failed");
+  }
+};
+
+
   return (
     <Box
     component="main"
@@ -139,7 +160,7 @@ export default function LoginPage() {
           Log in to proceed with your fitness journey
         </Typography>
 
-        <form>
+        <form onSubmit={handleLogin}>
           <TextField
             color="success"
             label="Email"
@@ -222,7 +243,8 @@ export default function LoginPage() {
             fontWeight: 500,
           }}
         >
-          Login with Google
+          <Google sx={{ mr: 1 }} />
+          <span style={{ fontWeight: 500 }}>Sign in with Google</span>
         </Button>
 
         <Box textAlign="center" mt={3}>
