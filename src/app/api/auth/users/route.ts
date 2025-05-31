@@ -1,6 +1,11 @@
 import { pool } from "../../../lib/db";
 import { NextRequest, NextResponse } from "next/server";
+
+import bcrypt from "bcrypt";
+
+
 import bcrypt from "bcrypt" ;
+
 // GET all users
 export async function GET() {
   const result = await pool.query("SELECT id, name, mobile, emailid, created_at FROM users ORDER BY created_at DESC");
@@ -32,4 +37,8 @@ export async function POST(request: NextRequest) {
     console.error("❌ Error creating user:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
+
 }
+
+}
+

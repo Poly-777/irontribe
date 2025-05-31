@@ -1,3 +1,4 @@
+
 'use client'
 import { useRouter } from 'next/navigation'
 
@@ -9,4 +10,8 @@ const usePageRedirect = (pageName: string) => {
   }
 }
 
+
 export default usePageRedirect
+
+export default usePageRedirect
+
