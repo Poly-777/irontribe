@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import {
   Typography,
   Box,
-  Button,
+  Button, 
   Link,
   TextField,
   IconButton,
@@ -13,7 +13,7 @@ import {
 import Image from "next/image";
 import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
 import { signinUser } from "../api/lib/api";
-import usePageRedirect from "../api/redirect/route";
+import usePageRedirect from '../api/redirect/route';
 
 export default function SignupPage() {
   const router = useRouter();
