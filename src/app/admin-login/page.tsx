@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Typography,
@@ -13,9 +13,9 @@ import {
 import Image from "next/image";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
   const router = useRouter();
-  const [user, setUser] = useState({
+  const [admin, setAdmin] = useState({
     emailid: "",
     password: "",
     emailError: "",
@@ -47,9 +47,9 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    setButtonDisabled(!(user.emailid && validatePassword(user.password)));
+    setButtonDisabled(!(admin.emailid && validatePassword(admin.password)));
     // eslint-disable-next-line
-  }, [user.emailid, user.password]);
+  }, [admin.emailid, admin.password]);
 
   const validateEmail = (emailid: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -59,10 +59,10 @@ export default function LoginPage() {
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
     if (email === "" || validateEmail(email)) {
-      setUser({ ...user, emailid: email, emailError: "" });
+      setAdmin({ ...admin, emailid: email, emailError: "" });
     } else {
-      setUser({
-        ...user,
+      setAdmin({
+        ...admin,
         emailid: email,
         emailError: "Please enter a valid email address",
       });
@@ -71,8 +71,8 @@ export default function LoginPage() {
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const password = e.target.value;
-    setUser((prevUser) => ({
-      ...prevUser,
+    setAdmin((prevAdmin) => ({
+      ...prevAdmin,
       password: password,
     }));
     validatePassword(password);
@@ -84,6 +84,19 @@ export default function LoginPage() {
 
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (
+      admin.emailid === "admin@example.com" &&
+      admin.password === "Admin@123"
+    ) {
+      localStorage.setItem("admin", "true");
+      router.push("/admin-dashboard");
+    } else {
+      setErrorMessage("Invalid admin credentials. Please try again.");
+    }
   };
 
   const errorMessageStyle = {
@@ -129,7 +142,7 @@ export default function LoginPage() {
           textAlign="center"
           mb={1}
         >
-          Welcome to IronTribe
+          Admin Login
         </Typography>
         <Typography
           variant="subtitle1"
@@ -137,21 +150,21 @@ export default function LoginPage() {
           textAlign="center"
           mb={3}
         >
-          Log in to proceed with your fitness journey
+          Sign in to manage IronTribe as an administrator
         </Typography>
 
-        <form>
+        <form onSubmit={handleSubmit}>
           <TextField
             color="success"
-            label="Email"
+            label="Admin Email"
             name="emailid"
             type="email"
             fullWidth
             size="small"
-            value={user.emailid}
+            value={admin.emailid}
             onChange={handleEmailChange}
-            error={!!user.emailError}
-            helperText={user.emailError}
+            error={!!admin.emailError}
+            helperText={admin.emailError}
             margin="normal"
           />
 
@@ -162,7 +175,7 @@ export default function LoginPage() {
             type={showPassword ? "text" : "password"}
             fullWidth
             size="small"
-            value={user.password}
+            value={admin.password}
             onChange={handlePasswordChange}
             error={!!passwordError}
             helperText={passwordError}
@@ -192,38 +205,15 @@ export default function LoginPage() {
             type="submit"
             sx={{ mt: 2, fontWeight: "bold", py: 1.5 }}
           >
-            Submit
+            Login as Admin
           </Button>
         </form>
 
-        <Box textAlign="right" mt={1}>
-          <Link href="/forgot-password" underline="hover" color="primary">
-            Forgot password?
-          </Link>
-        </Box>
-
-        <Button
-          variant="outlined"
-          color="secondary"
-          fullWidth
-          sx={{
-            mt: 2,
-            fontWeight: 500,
-            textTransform: "none",
-            borderColor: "#1976d2",
-            color: "#1976d2",
-            "&:hover": { backgroundColor: "#e3f2fd" },
-          }}
-          onClick={() => router.push("/admin-login")}
-        >
-          Login as Admin
-        </Button>
-
         <Box textAlign="center" mt={3}>
           <Typography variant="body2">
-            Don’t have an account?{" "}
-            <Link href="/signup" underline="hover" fontWeight="bold">
-              Sign Up
+            Not an admin?{" "}
+            <Link href="/login" underline="hover" fontWeight="bold">
+              User Login
             </Link>
           </Typography>
         </Box>
