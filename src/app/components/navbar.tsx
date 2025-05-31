@@ -189,7 +189,7 @@ export default function Navbar() {
                       { label: 'Profile', href: '/profile' },
                       { label: 'Attendance', href: '/attendance' },
                       { label: 'Trainers', href: '/trainers' },
-                      { label: 'Diet Plan', href: '/diet-plan' },
+                      { label: 'Diet Plan', href: '/diet' },
                     ].map((item) => {
                       const isActive = pathname === item.href;
                       return (
