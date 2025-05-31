@@ -13,6 +13,7 @@ import {
 import Image from "next/image";
 import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
 import { signinUser } from "../api/lib/api";
+import usePageRedirect from "../api/redirect/route";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -20,7 +21,7 @@ export default function SignupPage() {
     name: "",
     mobile: "",
     emailid: "",
-    password: "",
+    password: "", 
   });
   const [buttonDisabled, setButtonDisabled] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
@@ -28,6 +29,7 @@ export default function SignupPage() {
   const [emailError, setEmailError] = React.useState("");
   const [passwordError, setPasswordError] = React.useState("");
   const [mobileError, setMobileError] = React.useState("");
+  const [error, setError] = React.useState(""); // For general errors
 
   const validateName = (Name: any) => {
     const isValid = /^[A-Za-z]+ [A-Za-z]+$/.test(Name);
@@ -105,16 +107,22 @@ export default function SignupPage() {
         localStorage.setItem("emailid", user.emailid || "");
         localStorage.setItem("mobile", user.mobile || "");
         localStorage.setItem("name", user.name || "");
-        router.push("/dashboard");
+        router.push("/home");
       } else if (data.status === 400) {
         router.push("/signup");
-      } else {
+      } else if (data.status === 500) {
+      // User already exists
+      alert("User already exists. Redirecting to login...");
+      setTimeout(() => router.push("/login"), 2000); // Redirect after 2s
+    } else {
         console.error("Unhandled status code:", data.status);
       }
     } catch (error) {
       console.error("Signup failed", error);
     }
   };
+
+   const goToLogin = usePageRedirect('login');
 
   return (
     <Box
@@ -256,12 +264,6 @@ export default function SignupPage() {
           </Button>
         </form>
 
-        <Box textAlign="right" mt={1}>
-          <Link href="/forgot-password" underline="hover" color="primary">
-            Forgot password?
-          </Link>
-        </Box>
-
         <Typography
           variant="subtitle2"
           align="center"
@@ -282,7 +284,8 @@ export default function SignupPage() {
             textTransform: "none",
             fontWeight: 500,
           }}
-        >
+          >
+          <Google sx={{ mr: 1 }} />
           Sign up with Google
         </Button>
 

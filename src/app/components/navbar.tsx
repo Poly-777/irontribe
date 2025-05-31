@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   AppBar,
   Box,
@@ -12,6 +12,10 @@ import {
   List,
   ListItem,
   ListItemText,
+  Avatar,
+  Paper,
+  Divider,
+  ClickAwayListener,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import Image from 'next/image';
@@ -22,10 +26,20 @@ const navItems = ['Home', 'About', 'Gallery', 'pricing', 'Trainers', 'Contact'];
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
+  const dropdownRef = useRef(null);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleDropdownToggle = () => {
+    setDropdownOpen((prev) => !prev);
+  };
+
+  const handleDropdownClose = () => {
+    setDropdownOpen(false);
   };
 
   const drawer = (
@@ -67,6 +81,7 @@ export default function Navbar() {
     <>
       <AppBar component="nav" position="absolute" sx={{ backgroundColor: '#000', color: '#fff' }}>
         <Toolbar>
+          {/* Hamburger Icon for Mobile */}
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -77,12 +92,14 @@ export default function Navbar() {
             <MenuIcon />
           </IconButton>
 
+          {/* Logo */}
           <Box sx={{ flexGrow: 0, display: 'flex', justifyContent: { xs: 'center', sm: 'start' } }}>
             <Link href="/">
               <Image src="/logogym.png" alt="IronTribe Gym" width={80} height={65} />
             </Link>
           </Box>
 
+          {/* Desktop Nav Items */}
           <Box sx={{ display: { xs: 'none', sm: 'block' }, ml: 'auto' }}>
             {navItems.map((item) => {
               const itemPath = `/${item.toLowerCase()}`;
@@ -123,9 +140,112 @@ export default function Navbar() {
               );
             })}
           </Box>
+
+          {/* Avatar Dropdown */}
+          <Box sx={{ ml: 2, position: 'relative' }}>
+            <ClickAwayListener onClickAway={handleDropdownClose}>
+              <Box>
+                <IconButton onClick={handleDropdownToggle} ref={dropdownRef}>
+                  <Avatar alt="User" src="/avatar.jpg" />
+                </IconButton>
+
+                {dropdownOpen && (
+                  <Paper
+                    elevation={4}
+                    sx={{
+                      position: 'absolute',
+                      top: '100%',
+                      right: 0,
+                      mt: 1,
+                      minWidth: 180,
+                      zIndex: 10,
+                      borderRadius: 0,
+                      overflow: 'hidden',
+
+                      // Animation styles
+                      animation: 'fadeSlideDown 0.3s ease forwards',
+                      '@keyframes fadeSlideDown': {
+                        '0%': {
+                          opacity: 0,
+                          transform: 'translateY(-10px)',
+                        },
+                        '100%': {
+                          opacity: 1,
+                          transform: 'translateY(0)',
+                        },
+                      },
+                    }}
+                  >
+                    <Box sx={{ px: 2, py: 1 }}>
+                      <Typography variant="body1" fontWeight="bold">
+                        John Doe
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        john@email.com
+                      </Typography>
+                    </Box>
+                    <Divider />
+                    {[
+                      { label: 'Profile', href: '/profile' },
+                      { label: 'Attendance', href: '/attendance' },
+                      { label: 'Trainers', href: '/trainers' },
+                      { label: 'Diet Plan', href: '/diet-plan' },
+                    ].map((item) => {
+                      const isActive = pathname === item.href;
+                      return (
+                        <Box key={item.label} sx={{ px: 2, py: 1 }}>
+                          <Link
+                            href={item.href}
+                            style={{
+                              textDecoration: 'none',
+                              color: isActive ? '#f44336' : '#000',
+                              fontSize: '0.95rem',
+                              display: 'block',
+                              fontWeight: isActive ? 'bold' : 'normal',
+                              position: 'relative',
+                              paddingBottom: '4px',
+                            }}
+                            onClick={handleDropdownClose}
+                          >
+                            {item.label}
+                            <span
+                              style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                height: '2px',
+                                width: isActive ? '100%' : '0',
+                                backgroundColor: '#f44336',
+                                transition: 'width 0.3s ease',
+                              }}
+                            />
+                          </Link>
+                        </Box>
+                      );
+                    })}
+                    <Divider />
+                    <Box sx={{ px: 2, py: 1 }}>
+                      <Typography
+                        variant="body2"
+                        color="error"
+                        sx={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          alert('Logging out...');
+                          handleDropdownClose();
+                        }}
+                      >
+                        Logout
+                      </Typography>
+                    </Box>
+                  </Paper>
+                )}
+              </Box>
+            </ClickAwayListener>
+          </Box>
         </Toolbar>
       </AppBar>
 
+      {/* Mobile Drawer */}
       <Drawer
         anchor="left"
         open={mobileOpen}
