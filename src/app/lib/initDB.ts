@@ -32,4 +32,8 @@ export async function initDB() {
   } finally {
     await adminClient.end();
   }
+
 }
+
+}
+

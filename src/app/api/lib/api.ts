@@ -47,7 +47,7 @@ async function signinUser(name: any, mobile: any, emailid: any, password: any) {
 
 
 async function contactUser(name: any, emailid: any, mobile: any, message: any) {
-  const response = await fetch(`http://52.0.173.253:8000/lmsusers/contact`, {
+  const response = await fetch(`api/auth/users`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -63,3 +63,6 @@ async function contactUser(name: any, emailid: any, mobile: any, message: any) {
 
 export {loginUser, signinUser, contactUser };
 
+
+
+ 

@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 // Create a connection pool
@@ -9,4 +10,8 @@ export const pool = new Pool({
   database: process.env.PG_DATABASE,
   password: process.env.PG_PASSWORD,
   port: Number(process.env.PG_PORT),
+
 });
+
+});
+

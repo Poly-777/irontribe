@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import {
   Typography,
   Box,
-  Button,
+  Button, 
   Link,
   TextField,
   IconButton,
@@ -263,6 +263,7 @@ export default function SignupPage() {
             Submit
           </Button>
         </form>
+
 
         <Typography
           variant="subtitle2"
