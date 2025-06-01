@@ -85,7 +85,7 @@ export default function ProfilePage() {
         }}
       />
 
-      <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 2 }}>
+      <Container maxWidth="sm" sx={{ position: 'relative', zIndex: 2, marginTop:5}}>
         <Paper
           elevation={3}
           sx={{
