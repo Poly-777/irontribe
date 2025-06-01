@@ -195,7 +195,7 @@ export default function Navbar() {
                     <Divider />
                     {[
                       { label: 'Profile', href: '/profile' },
-                      { label: 'Attendance', href: '/attendance' },
+                      { label: 'Schedules', href: '/schedules' },
                       { label: 'Trainers', href: '/trainers' },
                       { label: 'Diet Plan', href: '/diet' },
                     ].map((item) => {
