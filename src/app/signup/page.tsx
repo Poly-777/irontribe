@@ -264,6 +264,7 @@ export default function SignupPage() {
           </Button>
         </form>
 
+
         <Typography
           variant="subtitle2"
           align="center"

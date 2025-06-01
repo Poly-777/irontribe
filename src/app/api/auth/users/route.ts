@@ -1,5 +1,6 @@
 import { pool } from "../../../lib/db";
 import { NextRequest, NextResponse } from "next/server";
+
 import bcrypt from "bcrypt";
 
 // GET all users
@@ -33,4 +34,7 @@ export async function POST(request: NextRequest) {
     console.error("❌ Error creating user:", error);
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
+
 }
+
+

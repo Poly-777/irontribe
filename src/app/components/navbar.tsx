@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   AppBar,
   Box,
@@ -12,6 +12,10 @@ import {
   List,
   ListItem,
   ListItemText,
+  Avatar,
+  Paper,
+  Divider,
+  ClickAwayListener,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import Image from 'next/image';
@@ -22,10 +26,33 @@ const navItems = ['Home', 'About', 'Gallery', 'pricing', 'Trainers', 'Contact'];
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
+  const dropdownRef = useRef(null);
+
+  // New state for user info
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+
+  // Fetch from localStorage on mount
+  useEffect(() => {
+    const name = localStorage.getItem('name') || 'Guest';
+    const email = localStorage.getItem('emailid') || 'guest@example.com';
+
+    setUserName(name);
+    setUserEmail(email);
+  }, []);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleDropdownToggle = () => {
+    setDropdownOpen((prev) => !prev);
+  };
+
+  const handleDropdownClose = () => {
+    setDropdownOpen(false);
   };
 
   const drawer = (
@@ -122,6 +149,106 @@ export default function Navbar() {
                 </Button>
               );
             })}
+          </Box>
+
+          {/* Avatar Dropdown */}
+          <Box sx={{ ml: 2, position: 'relative' }}>
+            <ClickAwayListener onClickAway={handleDropdownClose}>
+              <Box>
+                <IconButton onClick={handleDropdownToggle} ref={dropdownRef}>
+                  <Avatar alt="User" src="/avatar.jpg" />
+                </IconButton>
+
+                {dropdownOpen && (
+                  <Paper
+                    elevation={4}
+                    sx={{
+                      position: 'absolute',
+                      top: '100%',
+                      right: 0,
+                      mt: 1,
+                      minWidth: 180,
+                      zIndex: 10,
+                      borderRadius: 0,
+                      overflow: 'hidden',
+                      animation: 'fadeSlideDown 0.3s ease forwards',
+                      '@keyframes fadeSlideDown': {
+                        '0%': {
+                          opacity: 0,
+                          transform: 'translateY(-10px)',
+                        },
+                        '100%': {
+                          opacity: 1,
+                          transform: 'translateY(0)',
+                        },
+                      },
+                    }}
+                  >
+                    <Box sx={{ px: 2, py: 1 }}>
+                      <Typography variant="body1" fontWeight="bold">
+                        {userName}
+                      </Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        {userEmail}
+                      </Typography>
+                    </Box>
+                    <Divider />
+                    {[
+                      { label: 'Profile', href: '/profile' },
+                      { label: 'Attendance', href: '/attendance' },
+                      { label: 'Trainers', href: '/trainers' },
+                      { label: 'Diet Plan', href: '/diet' },
+                    ].map((item) => {
+                      const isActive = pathname === item.href;
+                      return (
+                        <Box key={item.label} sx={{ px: 2, py: 1 }}>
+                          <Link
+                            href={item.href}
+                            style={{
+                              textDecoration: 'none',
+                              color: isActive ? '#f44336' : '#000',
+                              fontSize: '0.95rem',
+                              display: 'block',
+                              fontWeight: isActive ? 'bold' : 'normal',
+                              position: 'relative',
+                              paddingBottom: '4px',
+                            }}
+                            onClick={handleDropdownClose}
+                          >
+                            {item.label}
+                            <span
+                              style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                height: '2px',
+                                width: isActive ? '100%' : '0',
+                                backgroundColor: '#f44336',
+                                transition: 'width 0.3s ease',
+                              }}
+                            />
+                          </Link>
+                        </Box>
+                      );
+                    })}
+                    <Divider />
+                    <Box sx={{ px: 2, py: 1 }}>
+                      <Typography
+                        variant="body2"
+                        color="error"
+                        sx={{ cursor: 'pointer' }}
+                        onClick={() => {
+                          alert('Logging out...');
+                          handleDropdownClose();
+                        }}
+                      >
+                        Logout
+                      </Typography>
+                    </Box>
+                  </Paper>
+                )}
+              </Box>
+            </ClickAwayListener>
           </Box>
         </Toolbar>
       </AppBar>

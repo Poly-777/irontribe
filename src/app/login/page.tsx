@@ -8,13 +8,13 @@ import {
   Box,
   Button,
   Link,
-  Grid, // Grid is imported but not used in the provided snippet's JSX
   TextField,
   IconButton,
   Paper,
 } from "@mui/material";
 import Image from "next/image";
-import { Visibility, VisibilityOff, Google } from "@mui/icons-material"; // Import Visibility icons
+
+import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -30,7 +30,7 @@ export default function LoginPage() {
   const [successMessage, setSuccessMessage] = useState(""); // Added for success message
   const [loading, setLoading] = useState(false); // Add loading state
 
-  const validatePassword = (password: string) => { // Added type for password
+  const validatePassword = (password: string) => {
     const isValid =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
         password
@@ -52,8 +52,8 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    // Enable button only if email is valid and password meets criteria (or is empty for initial state)
-    setButtonDisabled(!(user.emailid && validateEmail(user.emailid) && (user.password === "" || validatePassword(user.password))));
+    setButtonDisabled(!(user.emailid && validatePassword(user.password)));
+    // eslint-disable-next-line
   }, [user.emailid, user.password]);
 
 
@@ -62,7 +62,7 @@ export default function LoginPage() {
     return emailRegex.test(emailid);
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => { // Added type for event
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const email = e.target.value;
     if (email === "" || validateEmail(email)) {
       setUser({ ...user, emailid: email, emailError: "" });
@@ -75,7 +75,7 @@ export default function LoginPage() {
     }
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => { // Added type for event
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const password = e.target.value;
     setUser((prevUser) => ({
       ...prevUser,
@@ -88,7 +88,7 @@ export default function LoginPage() {
     setShowPassword(!showPassword);
   };
 
-  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => { // Added type for event
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
@@ -162,9 +162,6 @@ export default function LoginPage() {
         justifyContent: "center",
         alignItems: "center",
         backdropFilter: "blur(8px)",
-        // Responsive height adjustment for smaller screens
-        minHeight: { xs: '100vh', sm: 'auto' },
-        py: { xs: 2, sm: 0 } // Add some padding for small screens
       }}
     >
       <Paper
@@ -233,7 +230,7 @@ export default function LoginPage() {
                   onMouseDown={handleMouseDownPassword}
                   edge="end"
                 >
-                  {showPassword ? <VisibilityOff /> : <Visibility />} {/* Use Visibility icons here */}
+                  {showPassword ? <Visibility /> : <VisibilityOff />}
                 </IconButton>
               ),
             }}
@@ -264,29 +261,25 @@ export default function LoginPage() {
           </Link>
         </Box>
 
-        <Typography
-          variant="subtitle2"
-          align="center"
-          mt={3}
-          fontWeight={500}
-          color="primary"
-        >
-          or login with
-        </Typography>
-
         <Button
-          variant="contained"
+          variant="outlined"
+          color="secondary"
           fullWidth
           sx={{
             mt: 2,
-            backgroundColor: "#000000",
-            "&:hover": { backgroundColor: "#808080" },
-            textTransform: "none",
             fontWeight: 500,
+            textTransform: "none",
+            borderColor: "#1976d2",
+            color: "#1976d2",
+            "&:hover": { backgroundColor: "#e3f2fd" },
           }}
+          onClick={() => router.push("/admin-login")}
         >
+
           <Google sx={{ mr: 1 }} />
           <span style={{ fontWeight: 500 }}>Sign in with Google</span>
+          Login as Admin
+
         </Button>
 
         <Box textAlign="center" mt={3}>
