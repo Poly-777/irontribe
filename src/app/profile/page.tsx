@@ -25,6 +25,7 @@ export default function ProfilePage() {
     name: '',
     age: '',
     sex: '',
+    address: "",
     height: '',
     weight: '',
     bodyShape: '',
@@ -233,6 +234,33 @@ export default function ProfilePage() {
                 ))}
               </TextField>
 
+                <TextField
+                label="Address"
+                name="address"
+                multiline
+                rows={1}
+                fullWidth
+                value={profile.address}
+                onChange={handleChange}
+                margin="normal"
+                variant="outlined"
+                sx={{
+                  borderRadius: 2,
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    boxShadow: '0 0 5px rgba(244, 67, 54, 0.3)',
+                    transition: 'box-shadow 0.3s ease',
+                    '&:hover fieldset': {
+                      borderColor: '#f44336',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f44336',
+                      boxShadow: '0 0 8px #f44336',
+                    },
+                  },
+                }}
+              />
+
               <TextField
                 select
                 label="Preferred Body Shape"
@@ -316,6 +344,10 @@ export default function ProfilePage() {
                 <Typography variant="body1" gutterBottom>
                   <strong>Sex:</strong> {profile.sex}
                 </Typography>
+                <Typography variant="body1" gutterBottom>
+                <strong>Address:</strong> {profile.address}
+                </Typography>
+
                 <Typography variant="body1" gutterBottom>
                   <strong>Height:</strong> {profile.height} cm
                 </Typography>

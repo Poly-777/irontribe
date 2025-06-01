@@ -43,7 +43,6 @@ const sidebarItems = [
   { label: "Settings", value: "settings" },
 ];
 
-// NOTE: Removed initialUsers from state initialization — users will come from backend fetch
 
 function AttendanceTab({ users, setUsers }: { users: any[]; setUsers: React.Dispatch<React.SetStateAction<any[]>> }) {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));

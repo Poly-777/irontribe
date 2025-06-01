@@ -1,8 +1,10 @@
+
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { Box, Typography, Grid, Card, CardContent, Button } from "@mui/material";
 
-const plans = [
+  const plans = [
   {
     title: "Starter Plan",
     price: "₹499",
@@ -55,9 +57,15 @@ const plans = [
       "Priority event invites",
     ],
   },
-];
-
+  ];
 export default function PricingPage() {
+  const router = useRouter();
+
+  const handleChoosePlan = (plan: any) => {
+    // Navigate to /payment with query params
+    router.push(`/payment?title=${encodeURIComponent(plan.title)}&price=${plan.price}`);
+  };
+
   return (
     <Box sx={{ minHeight: "100vh", backgroundColor: "#f9f9f9", py: 6, px: 3 ,marginTop:5}}>
       <Typography
@@ -90,7 +98,6 @@ export default function PricingPage() {
                 <Typography variant="h4" fontWeight="bold" color="error">
                   {plan.price}
                 </Typography>
-
                 <Typography variant="subtitle1" mb={2}>
                   {plan.duration}
                 </Typography>
@@ -105,6 +112,7 @@ export default function PricingPage() {
               <Box textAlign="center" pb={3}>
                 <Button
                   variant={plan.recommended ? "contained" : "outlined"}
+                  onClick={() => handleChoosePlan(plan)}
                   sx={{
                     borderColor: plan.recommended ? "#fff" : "#000",
                     color: plan.recommended ? "#000" : "#000",
@@ -127,3 +135,4 @@ export default function PricingPage() {
     </Box>
   );
 }
+
