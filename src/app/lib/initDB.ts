@@ -1,3 +1,4 @@
+//initDB.ts
 import { Client } from "pg";
 import dotenv from "dotenv";
 dotenv.config();
@@ -34,6 +35,3 @@ export async function initDB() {
   }
 
 }
-
-}
-

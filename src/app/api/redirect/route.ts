@@ -11,7 +11,4 @@ const usePageRedirect = (pageName: string) => {
 }
 
 
-export default usePageRedirect
-
-export default usePageRedirect
-
+export default usePageRedirect;

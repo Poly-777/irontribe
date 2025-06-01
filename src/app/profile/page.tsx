@@ -12,7 +12,7 @@ import {
   IconButton,
   Divider,
 } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
@@ -21,10 +21,8 @@ const sexes = ['Male', 'Female', 'Other'];
 const bodyShapes = ['Athletic', 'Lean', 'Muscular', 'Toned', 'Bulky'];
 
 export default function ProfilePage() {
-  // Initial state — empty means first time user
   const [profile, setProfile] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     age: '',
     sex: '',
     height: '',
@@ -34,6 +32,14 @@ export default function ProfilePage() {
   });
 
   const [editMode, setEditMode] = useState(false);
+
+  // Fetch name from localStorage on mount
+  useEffect(() => {
+    const storedName = localStorage.getItem('name');
+    if (storedName) {
+      setProfile((prev) => ({ ...prev, name: storedName }));
+    }
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,7 +53,7 @@ export default function ProfilePage() {
     // Save to backend here if needed
   };
 
-  const isProfileEmpty = !profile.firstName && !profile.lastName;
+  const isProfileEmpty = !profile.name;
 
   return (
     <Box
@@ -113,10 +119,9 @@ export default function ProfilePage() {
           />
 
           <Typography variant="h4" gutterBottom textAlign="center">
-            Your Profile
+            {profile.name || 'Your Profile'}
           </Typography>
 
-          {/* Show message if empty and NOT editing */}
           {isProfileEmpty && !editMode && (
             <Box textAlign="center" sx={{ mt: 2, mb: 3 }}>
               <Typography variant="body1" sx={{ mb: 1 }}>
@@ -133,12 +138,35 @@ export default function ProfilePage() {
             </Box>
           )}
 
-          {/* EDIT MODE FORM */}
           {editMode ? (
             <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2, width: '100%' }}>
-              {[
-                { label: 'First Name', name: 'firstName', required: true },
-                { label: 'Last Name', name: 'lastName', required: true },
+              <TextField
+                label="Name"
+                name="name"
+                fullWidth
+                value={profile.name}
+                onChange={handleChange}
+                margin="normal"
+                required
+                variant="outlined"
+                sx={{
+                  borderRadius: 2,
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: 2,
+                    boxShadow: '0 0 5px rgba(244, 67, 54, 0.3)',
+                    transition: 'box-shadow 0.3s ease',
+                    '&:hover fieldset': {
+                      borderColor: '#f44336',
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: '#f44336',
+                      boxShadow: '0 0 8px #f44336',
+                    },
+                  },
+                }}
+              />
+
+              {[ 
                 { label: 'Age', name: 'age', type: 'number', required: true },
                 { label: 'Height (cm)', name: 'height', type: 'number', required: true },
                 { label: 'Weight (kg)', name: 'weight', type: 'number', required: true },
@@ -147,7 +175,7 @@ export default function ProfilePage() {
                   key={name}
                   label={label}
                   name={name}
-                  type={type || 'text'}
+                  type={type}
                   fullWidth
                   value={(profile as any)[name]}
                   onChange={handleChange}
@@ -277,11 +305,10 @@ export default function ProfilePage() {
               </Button>
             </Box>
           ) : (
-            // READ-ONLY DISPLAY
             !isProfileEmpty && (
               <Box sx={{ width: '100%', mt: 2 }}>
                 <Typography variant="body1" gutterBottom>
-                  <strong>Name:</strong> {profile.firstName} {profile.lastName}
+                  <strong>Name:</strong> {profile.name}
                 </Typography>
                 <Typography variant="body1" gutterBottom>
                   <strong>Age:</strong> {profile.age}

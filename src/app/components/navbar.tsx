@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   AppBar,
   Box,
@@ -29,6 +29,19 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
   const dropdownRef = useRef(null);
+
+  // New state for user info
+  const [userName, setUserName] = useState('');
+  const [userEmail, setUserEmail] = useState('');
+
+  // Fetch from localStorage on mount
+  useEffect(() => {
+    const name = localStorage.getItem('name') || 'Guest';
+    const email = localStorage.getItem('emailid') || 'guest@example.com';
+
+    setUserName(name);
+    setUserEmail(email);
+  }, []);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -81,7 +94,6 @@ export default function Navbar() {
     <>
       <AppBar component="nav" position="absolute" sx={{ backgroundColor: '#000', color: '#fff' }}>
         <Toolbar>
-          {/* Hamburger Icon for Mobile */}
           <IconButton
             color="inherit"
             aria-label="open drawer"
@@ -92,14 +104,12 @@ export default function Navbar() {
             <MenuIcon />
           </IconButton>
 
-          {/* Logo */}
           <Box sx={{ flexGrow: 0, display: 'flex', justifyContent: { xs: 'center', sm: 'start' } }}>
             <Link href="/">
               <Image src="/logogym.png" alt="IronTribe Gym" width={80} height={65} />
             </Link>
           </Box>
 
-          {/* Desktop Nav Items */}
           <Box sx={{ display: { xs: 'none', sm: 'block' }, ml: 'auto' }}>
             {navItems.map((item) => {
               const itemPath = `/${item.toLowerCase()}`;
@@ -161,8 +171,6 @@ export default function Navbar() {
                       zIndex: 10,
                       borderRadius: 0,
                       overflow: 'hidden',
-
-                      // Animation styles
                       animation: 'fadeSlideDown 0.3s ease forwards',
                       '@keyframes fadeSlideDown': {
                         '0%': {
@@ -178,10 +186,10 @@ export default function Navbar() {
                   >
                     <Box sx={{ px: 2, py: 1 }}>
                       <Typography variant="body1" fontWeight="bold">
-                        John Doe
+                        {userName}
                       </Typography>
                       <Typography variant="caption" color="text.secondary">
-                        john@email.com
+                        {userEmail}
                       </Typography>
                     </Box>
                     <Divider />
@@ -245,7 +253,6 @@ export default function Navbar() {
         </Toolbar>
       </AppBar>
 
-      {/* Mobile Drawer */}
       <Drawer
         anchor="left"
         open={mobileOpen}

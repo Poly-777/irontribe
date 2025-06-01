@@ -25,7 +25,7 @@ async function loginUser(emailid: any, password: any) {
 
 async function signinUser(name: any, mobile: any, emailid: any, password: any) {
   console.log(name, mobile, emailid, password, "password here");
-  const response = await fetch(`api/auth/users`, {
+  const response = await fetch(`http://localhost:3000/api/auth/users`, {
       method: "POST",
       headers: {
           "Content-Type": "application/json",
@@ -47,7 +47,7 @@ async function signinUser(name: any, mobile: any, emailid: any, password: any) {
 
 
 async function contactUser(name: any, emailid: any, mobile: any, message: any) {
-  const response = await fetch(`api/auth/users`, {
+  const response = await fetch(`api/auth/contact`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

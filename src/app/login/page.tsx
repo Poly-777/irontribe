@@ -14,9 +14,6 @@ import Image from "next/image";
 
 import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
 
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-
-
 export default function LoginPage() {
   const router = useRouter();
   const [user, setUser] = useState({

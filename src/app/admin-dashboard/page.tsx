@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -38,72 +38,33 @@ const drawerWidth = 220;
 
 const sidebarItems = [
   { label: "Dashboard", value: "dashboard" },
-  { label: "Users", value: "users" },
   { label: "Attendance", value: "attendance" },
   { label: "Payments", value: "payments" },
   { label: "Settings", value: "settings" },
 ];
 
-// Mock user data
-const initialUsers = [
-  {
-    id: 1,
-    name: "John Doe",
-    plan: "Premium",
-    paymentStatus: "Paid",
-    lastAttendance: "2024-05-30",
-    attendance: [
-      { date: "2024-05-30", present: true },
-      { date: "2024-05-29", present: true },
-      { date: "2024-05-28", present: false },
-    ],
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    plan: "Basic",
-    paymentStatus: "Pending",
-    lastAttendance: "2024-05-28",
-    attendance: [
-      { date: "2024-05-30", present: false },
-      { date: "2024-05-29", present: false },
-      { date: "2024-05-28", present: true },
-    ],
-  },
-  {
-    id: 3,
-    name: "Mike Johnson",
-    plan: "Personal Training",
-    paymentStatus: "Overdue",
-    lastAttendance: "2024-05-27",
-    attendance: [
-      { date: "2024-05-30", present: false },
-      { date: "2024-05-29", present: false },
-      { date: "2024-05-28", present: false },
-    ],
-  },
-];
+// NOTE: Removed initialUsers from state initialization — users will come from backend fetch
 
-function AttendanceTab({ users, setUsers }: { users: typeof initialUsers; setUsers: any }) {
+function AttendanceTab({ users, setUsers }: { users: any[]; setUsers: React.Dispatch<React.SetStateAction<any[]>> }) {
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  function getAttendanceForDate(user: typeof initialUsers[0], date: string) {
-    return user.attendance.find((a) => a.date === date)?.present ?? false;
+  function getAttendanceForDate(user: typeof users[0], date: string) {
+    return user.attendance?.find((a: any) => a.date === date)?.present ?? false;
   }
 
   const presentCount = users.filter((u) => getAttendanceForDate(u, selectedDate)).length;
   const absentCount = users.length - presentCount;
 
   const handleMarkAttendance = (userId: number, present: boolean) => {
-    setUsers((prev: typeof initialUsers) =>
+    setUsers((prev) =>
       prev.map((u) =>
         u.id === userId
           ? {
               ...u,
               attendance: [
-                ...u.attendance.filter((a) => a.date !== selectedDate),
+                ...(u.attendance?.filter((a: any) => a.date !== selectedDate) || []),
                 { date: selectedDate, present },
               ],
             }
@@ -128,93 +89,75 @@ function AttendanceTab({ users, setUsers }: { users: typeof initialUsers; setUse
           sx={{ maxWidth: 200 }}
         />
         <Typography fontWeight="bold" ml={2}>
-          Present: <span style={{ color: "#2e7d32" }}>{presentCount}</span> | Absent: <span style={{ color: "#d32f2f" }}>{absentCount}</span>
+          Present: <span style={{ color: "#2e7d32" }}>{presentCount}</span> | Absent:{" "}
+          <span style={{ color: "#d32f2f" }}>{absentCount}</span>
         </Typography>
       </Paper>
 
       <Paper sx={{ p: { xs: 1, sm: 2 } }}>
-        <Box sx={{ width: "100%", overflowX: "auto" }}>
-          <TableContainer>
-            <Table size={isMobile ? "small" : "medium"}>
-              <TableHead>
-                <TableRow>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Plan</TableCell>
-                  <TableCell align="center">Status</TableCell>
-                  <TableCell align="center">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {users.map((user) => {
-                  const present = getAttendanceForDate(user, selectedDate);
-                  return (
-                    <TableRow key={user.id}>
-                      <TableCell>{user.name}</TableCell>
-                      <TableCell>
-                        <Chip label={user.plan} color="primary" size="small" />
-                      </TableCell>
-                      <TableCell align="center">
-                        {present ? (
-                          <Chip
-                            label="Present"
-                            color="success"
-                            icon={<CheckCircleIcon />}
-                            size="small"
-                          />
-                        ) : (
-                          <Chip
-                            label="Absent"
-                            color="error"
-                            icon={<CancelIcon />}
-                            size="small"
-                          />
-                        )}
-                      </TableCell>
-                      <TableCell align="center">
-                        <Button
-                          size="small"
-                          variant={present ? "outlined" : "contained"}
-                          color="success"
-                          sx={{ mr: 1 }}
-                          onClick={() => handleMarkAttendance(user.id, true)}
-                        >
-                          Mark Present
-                        </Button>
-                        <Button
-                          size="small"
-                          variant={!present ? "outlined" : "contained"}
-                          color="error"
-                          onClick={() => handleMarkAttendance(user.id, false)}
-                        >
-                          Mark Absent
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-                {users.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={4} align="center">
-                      No users found.
+        <TableContainer>
+          <Table size={isMobile ? "small" : "medium"}>
+            <TableHead>
+              <TableRow>
+                <TableCell>Name</TableCell>
+                <TableCell>Plan</TableCell>
+                <TableCell align="center">Status</TableCell>
+                <TableCell align="center">Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {users.map((user) => {
+                const present = getAttendanceForDate(user, selectedDate);
+                return (
+                  <TableRow key={user.id}>
+                    <TableCell>{user.name}</TableCell>
+                    <TableCell>
+                      <Chip label={user.plan} color="primary" size="small" />
+                    </TableCell>
+                    <TableCell align="center">
+                      {present ? (
+                        <Chip label="Present" color="success" icon={<CheckCircleIcon />} size="small" />
+                      ) : (
+                        <Chip label="Absent" color="error" icon={<CancelIcon />} size="small" />
+                      )}
+                    </TableCell>
+                    <TableCell align="center">
+                      <Button
+                        size="small"
+                        variant={present ? "outlined" : "contained"}
+                        color="success"
+                        sx={{ mr: 1 }}
+                        onClick={() => handleMarkAttendance(user.id, true)}
+                      >
+                        Mark Present
+                      </Button>
+                      <Button
+                        size="small"
+                        variant={!present ? "outlined" : "contained"}
+                        color="error"
+                        onClick={() => handleMarkAttendance(user.id, false)}
+                      >
+                        Mark Absent
+                      </Button>
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Paper>
     </Box>
   );
 }
 
-// Example PaymentsTab component
 function PaymentsTab() {
   const payments = [
     { id: 1, name: "John Doe", plan: "Premium", status: "Paid", date: "2024-05-30" },
     { id: 2, name: "Jane Smith", plan: "Basic", status: "Pending", date: "2024-05-28" },
     { id: 3, name: "Mike Johnson", plan: "Personal Training", status: "Overdue", date: "2024-05-27" },
   ];
+
   return (
     <Box>
       <Typography variant="h5" fontWeight="bold" mb={2}>
@@ -238,13 +181,7 @@ function PaymentsTab() {
                 <TableCell>
                   <Chip
                     label={p.status}
-                    color={
-                      p.status === "Paid"
-                        ? "success"
-                        : p.status === "Pending"
-                        ? "warning"
-                        : "error"
-                    }
+                    color={p.status === "Paid" ? "success" : p.status === "Pending" ? "warning" : "error"}
                   />
                 </TableCell>
                 <TableCell>{p.date}</TableCell>
@@ -259,8 +196,8 @@ function PaymentsTab() {
 
 export default function AdminDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [users, setUsers] = useState(initialUsers);
-  const [selectedUser, setSelectedUser] = useState<typeof initialUsers[0] | null>(null);
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("dashboard");
   const router = useRouter();
@@ -272,12 +209,29 @@ export default function AdminDashboard() {
     setMobileOpen(!mobileOpen);
   };
 
-  const handleUserClick = (user: typeof initialUsers[0]) => {
-    setSelectedUser(user);
-    if (isMobile) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const res = await fetch("/api/auth/users");
+        if (!res.ok) throw new Error("Failed to fetch users");
+        const data = await res.json();
+        setUsers(data);
+      } catch (error) {
+        console.error("Fetch users error:", error);
+      } finally {
+        setLoading(false);
+      }
     }
-  };
+    fetchUsers();
+  }, []);
+
+  if (loading) {
+    return (
+      <Box sx={{ p: 4, textAlign: "center" }}>
+        <Typography variant="h6">Loading users...</Typography>
+      </Box>
+    );
+  }
 
   const handleLogout = () => {
     localStorage.removeItem("admin");
@@ -288,10 +242,14 @@ export default function AdminDashboard() {
     user.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  // Get today's date in yyyy-mm-dd format for attendance check in dashboard
+  const today = new Date().toISOString().slice(0, 10);
+  const presentTodayCount = users.filter((u) => u.attendance?.some((a: any) => a.date === today && a.present)).length;
+
   const drawer = (
     <div>
       <Box sx={{ display: "flex", justifyContent: "center", mt: 2, mb: 2 }}>
-        <Image src="/logogym.png" alt="logo" width={80} height={60} style={{ maxWidth: "100%" }} />
+        <Image src="/logogym.png" alt="logo" width={80} height={60} />
       </Box>
       <List>
         {sidebarItems.map((item) => (
@@ -301,7 +259,6 @@ export default function AdminDashboard() {
             selected={activeTab === item.value}
             onClick={() => {
               setActiveTab(item.value);
-              setSelectedUser(null);
               setMobileOpen(false);
             }}
             sx={{
@@ -321,15 +278,7 @@ export default function AdminDashboard() {
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", background: "#f4f6f8" }}>
       {/* Sidebar */}
-      <Box
-        component="nav"
-        sx={{
-          width: { sm: drawerWidth },
-          flexShrink: { sm: 0 },
-        }}
-        aria-label="admin sidebar"
-      >
-        {/* Mobile Drawer */}
+      <Box component="nav" sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}>
         <Drawer
           variant="temporary"
           open={mobileOpen}
@@ -342,7 +291,6 @@ export default function AdminDashboard() {
         >
           {drawer}
         </Drawer>
-        {/* Desktop Drawer */}
         <Drawer
           variant="permanent"
           sx={{
@@ -356,276 +304,111 @@ export default function AdminDashboard() {
       </Box>
 
       {/* Main Content */}
-      <Box sx={{ flexGrow: 1, p: { xs: 1, sm: 3 } }}>
-        {/* Top Bar */}
-        <AppBar
-          position="fixed"
-          sx={{
-            width: { sm: `calc(100% - ${drawerWidth}px)` },
-            ml: { sm: `${drawerWidth}px` },
-            bgcolor: "#1976d2",
-          }}
-        >
-          <Toolbar>
-            <IconButton
-              color="inherit"
-              edge="start"
-              onClick={handleDrawerToggle}
-              sx={{ mr: 2, display: { sm: "none" } }}
-              aria-label="open drawer"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Typography
-              variant={isMobile ? "subtitle1" : "h6"}
-              noWrap
-              component="div"
-              sx={{ flexGrow: 1 }}
-            >
-              Admin Dashboard
+      <Box sx={{ flexGrow: 1, p: { xs: 2, sm: 4 }, width: { sm: `calc(100% - ${drawerWidth}px)` } }}>
+        {/* AppBar */}
+        <AppBar position="static" color="default" elevation={0} sx={{ mb: 3 }}>
+          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
+            {isMobile && (
+              <IconButton color="inherit" edge="start" onClick={handleDrawerToggle}>
+                <MenuIcon />
+              </IconButton>
+            )}
+            <Typography variant="h6" noWrap component="div">
+              Gym Admin Dashboard
             </Typography>
             <IconButton color="inherit" onClick={handleLogout} title="Logout">
               <LogoutIcon />
             </IconButton>
           </Toolbar>
         </AppBar>
-        <Toolbar /> {/* Offset for AppBar */}
 
-        {/* Main Content Area */}
+        {/* Tabs & Content */}
         {activeTab === "dashboard" && (
           <>
-            {/* Quick Stats */}
-            <Typography
-              variant={isMobile ? "h6" : "h4"}
-              fontWeight="bold"
-              mb={isMobile ? 1 : 3}
-              mt={isMobile ? 1 : 0}
-            >
-              Welcome, Admin!
-            </Typography>
-            <Grid container spacing={isMobile ? 1 : 3} mb={isMobile ? 1 : 3}>
-              <Grid item xs={12} sm={4}>
-                <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, textAlign: "center" }}>
-                  <Typography variant="subtitle2" color="primary">
-                    Total Users
-                  </Typography>
-                  <Typography variant={isMobile ? "h6" : "h4"} fontWeight="bold" mt={1}>
-                    {users.length}
-                  </Typography>
-                  <Typography color="text.secondary" mt={1} fontSize={isMobile ? 12 : 14}>
-                    Registered Members
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, textAlign: "center" }}>
-                  <Typography variant="subtitle2" color="primary">
-                    Paid Members
-                  </Typography>
-                  <Typography variant={isMobile ? "h6" : "h4"} fontWeight="bold" mt={1}>
-                    {users.filter((u) => u.paymentStatus === "Paid").length}
-                  </Typography>
-                  <Typography color="text.secondary" mt={1} fontSize={isMobile ? 12 : 14}>
-                    Up to date with payments
-                  </Typography>
-                </Paper>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <Paper elevation={3} sx={{ p: { xs: 2, sm: 3 }, textAlign: "center" }}>
-                  <Typography variant="subtitle2" color="primary">
-                    Attendance Today
-                  </Typography>
-                  <Typography variant={isMobile ? "h6" : "h4"} fontWeight="bold" mt={1}>
-                    {users.filter((u) => u.attendance[0]?.present).length}
-                  </Typography>
-                  <Typography color="text.secondary" mt={1} fontSize={isMobile ? 12 : 14}>
-                    Present today
-                  </Typography>
-                </Paper>
-              </Grid>
-            </Grid>
-            {/* User Table */}
-            <Paper elevation={3} sx={{ p: { xs: 1, sm: 3 }, mb: isMobile ? 1 : 3 }}>
-              <Box
-                display="flex"
-                flexDirection={isMobile ? "column" : "row"}
-                justifyContent="space-between"
-                alignItems={isMobile ? "stretch" : "center"}
-                mb={isMobile ? 1 : 2}
-                gap={isMobile ? 1 : 0}
-              >
-                <Typography variant="subtitle1" fontWeight="bold">
-                  Users & Plans
-                </Typography>
-                <TextField
-                  size="small"
-                  placeholder="Search users..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchIcon />
-                      </InputAdornment>
-                    ),
-                  }}
-                  sx={{ width: isMobile ? "100%" : 240 }}
-                />
-              </Box>
-              <Box sx={{ width: "100%", overflowX: "auto" }}>
-                <TableContainer>
-                  <Table size={isMobile ? "small" : "medium"}>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Name</TableCell>
-                        <TableCell>Plan</TableCell>
-                        <TableCell>Last Attendance</TableCell>
-                        <TableCell>Payment</TableCell>
-                        <TableCell>Attendance</TableCell>
-                        <TableCell>Action</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {filteredUsers.map((user) => (
-                        <TableRow key={user.id} hover>
-                          <TableCell>{user.name}</TableCell>
-                          <TableCell>
-                            <Chip label={user.plan} color="primary" size="small" />
-                          </TableCell>
-                          <TableCell>{user.lastAttendance}</TableCell>
-                          <TableCell>
-                            <Chip
-                              label={user.paymentStatus}
-                              color={
-                                user.paymentStatus === "Paid"
-                                  ? "success"
-                                  : user.paymentStatus === "Pending"
-                                  ? "warning"
-                                  : "error"
-                              }
-                              icon={
-                                user.paymentStatus === "Paid" ? (
-                                  <CheckCircleIcon fontSize="small" />
-                                ) : (
-                                  <CancelIcon fontSize="small" />
-                                )
-                              }
-                            />
-                          </TableCell>
-                          <TableCell>
-                            {user.attendance[0]?.present ? (
-                              <Chip label="Present" color="success" size="small" />
-                            ) : (
-                              <Chip label="Absent" color="error" size="small" />
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              size="small"
-                              variant="outlined"
-                              onClick={() => handleUserClick(user)}
-                            >
-                              Details
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                      {filteredUsers.length === 0 && (
-                        <TableRow>
-                          <TableCell colSpan={6} align="center">
-                            No users found.
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </Box>
-            </Paper>
-            {/* User Details Drawer/Modal */}
-            {selectedUser && (
+            <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", mb: 3, gap: 2 }}>
               <Paper
-                elevation={6}
                 sx={{
-                  p: { xs: 1.5, sm: 3 },
-                  mb: isMobile ? 1 : 3,
-                  background: "#e3f2fd",
-                  maxWidth: 600,
-                  mx: "auto",
+                  p: 2,
+                  flex: 1,
+                  minWidth: 150,
+                  textAlign: "center",
+                  bgcolor: "#1976d2",
+                  color: "#fff",
+                  borderRadius: 2,
                 }}
               >
-                <Box
-                  display="flex"
-                  flexDirection={isMobile ? "column" : "row"}
-                  justifyContent="space-between"
-                  alignItems={isMobile ? "stretch" : "center"}
-                  gap={isMobile ? 1 : 0}
-                >
-                  <Typography variant="subtitle1" fontWeight="bold">
-                    {selectedUser.name} - Details
-                  </Typography>
-                  <Button onClick={() => setSelectedUser(null)} size="small">
-                    Close
-                  </Button>
-                </Box>
-                <Typography mt={2}>
-                  <strong>Plan:</strong> {selectedUser.plan}
+                <Typography variant="subtitle1" fontWeight="bold">
+                  Total Users
                 </Typography>
-                <Typography>
-                  <strong>Payment Status:</strong>{" "}
-                  <Chip
-                    label={selectedUser.paymentStatus}
-                    color={
-                      selectedUser.paymentStatus === "Paid"
-                        ? "success"
-                        : selectedUser.paymentStatus === "Pending"
-                        ? "warning"
-                        : "error"
-                    }
-                    size="small"
-                  />
-                </Typography>
-                <Typography mt={2} fontWeight="bold">
-                  Attendance (Recent):
-                </Typography>
-                <Box sx={{ width: "100%", overflowX: "auto" }}>
-                  <TableContainer>
-                    <Table size="small">
-                      <TableHead>
-                        <TableRow>
-                          <TableCell>Date</TableCell>
-                          <TableCell>Status</TableCell>
-                        </TableRow>
-                      </TableHead>
-                      <TableBody>
-                        {selectedUser.attendance.map((att, idx) => (
-                          <TableRow key={idx}>
-                            <TableCell>{att.date}</TableCell>
-                            <TableCell>
-                              {att.present ? (
-                                <Chip label="Present" color="success" size="small" />
-                              ) : (
-                                <Chip label="Absent" color="error" size="small" />
-                              )}
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
-                  </TableContainer>
-                </Box>
+                <Typography variant="h4">{users.length}</Typography>
               </Paper>
-            )}
+              <Paper
+                sx={{
+                  p: 2,
+                  flex: 1,
+                  minWidth: 150,
+                  textAlign: "center",
+                  bgcolor: "#2e7d32",
+                  color: "#fff",
+                  borderRadius: 2,
+                }}
+              >
+                <Typography variant="subtitle1" fontWeight="bold">
+                  Present Today
+                </Typography>
+                <Typography variant="h4">{presentTodayCount}</Typography>
+              </Paper>
+            </Box>
+
+            <TextField
+              fullWidth
+              placeholder="Search users by name"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              size="small"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+              sx={{ mb: 3 }}
+            />
+
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Name</TableCell>
+                    <TableCell>Plan</TableCell>
+                    <TableCell>Attendance Count</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredUsers.map((user) => (
+                    <TableRow key={user.id}>
+                      <TableCell>{user.name}</TableCell>
+                      <TableCell>{user.plan}</TableCell>
+                      <TableCell>{user.attendance?.length || 0}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </>
         )}
 
-        {activeTab === "attendance" && (
-          <AttendanceTab users={users} setUsers={setUsers} />
-        )}
-
+        {activeTab === "attendance" && <AttendanceTab users={users} setUsers={setUsers} />}
         {activeTab === "payments" && <PaymentsTab />}
-
-        {/* Add more tab components here as needed */}
+        {activeTab === "settings" && (
+          <Box>
+            <Typography variant="h5" fontWeight="bold">
+              Settings
+            </Typography>
+            <Typography mt={2}>No settings configured yet.</Typography>
+          </Box>
+        )}
       </Box>
     </Box>
   );
