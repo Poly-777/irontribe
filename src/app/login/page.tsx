@@ -1,4 +1,6 @@
-"use client";
+// src/app/login/page.tsx
+'use client';
+
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -6,27 +8,29 @@ import {
   Box,
   Button,
   Link,
-  Grid,
+  Grid, // Grid is imported but not used in the provided snippet's JSX
   TextField,
   IconButton,
   Paper,
 } from "@mui/material";
 import Image from "next/image";
-import { Visibility, VisibilityOff, Google } from "@mui/icons-material";
+import { Visibility, VisibilityOff, Google } from "@mui/icons-material"; // Import Visibility icons
 
 export default function LoginPage() {
   const router = useRouter();
   const [user, setUser] = useState({
-    emailid: "",
+    emailid: "", // Renamed from 'email' to 'emailid' as per user's snippet
     password: "",
     emailError: "",
-  }); 
+  });
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState(""); // For general login errors
+  const [successMessage, setSuccessMessage] = useState(""); // Added for success message
+  const [loading, setLoading] = useState(false); // Add loading state
 
-  const validatePassword = (password: any) => {
+  const validatePassword = (password: string) => { // Added type for password
     const isValid =
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(
         password
@@ -48,15 +52,17 @@ export default function LoginPage() {
   };
 
   useEffect(() => {
-    setButtonDisabled(!(user.emailid && validatePassword(user.password)));
+    // Enable button only if email is valid and password meets criteria (or is empty for initial state)
+    setButtonDisabled(!(user.emailid && validateEmail(user.emailid) && (user.password === "" || validatePassword(user.password))));
   }, [user.emailid, user.password]);
+
 
   const validateEmail = (emailid: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(emailid);
   };
 
-  const handleEmailChange = (e: any) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => { // Added type for event
     const email = e.target.value;
     if (email === "" || validateEmail(email)) {
       setUser({ ...user, emailid: email, emailError: "" });
@@ -69,20 +75,20 @@ export default function LoginPage() {
     }
   };
 
-  const handlePasswordChange = (e: any) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => { // Added type for event
     const password = e.target.value;
     setUser((prevUser) => ({
       ...prevUser,
       password: password,
     }));
-    validatePassword(password);
+    validatePassword(password); // Validate on change
   };
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleMouseDownPassword = (event: any) => {
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => { // Added type for event
     event.preventDefault();
   };
 
@@ -92,46 +98,79 @@ export default function LoginPage() {
     fontSize: "0.85rem",
   };
 
+  const successMessageStyle = { // Added style for success message
+    color: "green",
+    marginTop: "10px",
+    fontSize: "0.85rem",
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
+    e.preventDefault();
+    setErrorMessage(""); // Clear previous errors
+    setSuccessMessage(""); // Clear previous success messages
+    setLoading(true); // Set loading to true at the start
 
-  const res = await fetch("/api/auth/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(user),
-  });
+    // Re-validate before submitting
+    if (!validateEmail(user.emailid) || !validatePassword(user.password)) {
+      setErrorMessage("Please correct the form errors.");
+      setLoading(false);
+      return;
+    }
+    try {
+      const res = await fetch("/api/auth/login", { // Correct API endpoint for login
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: user.emailid, password: user.password }), // Ensure payload matches API
+      });
+      const data = await res.json();
+      if (res.ok) {
+        // Login successful!
+        const userRole = data.user.role; // Get the role from the API response
+        setSuccessMessage(`Login successful! Redirecting to ${userRole} dashboard...`);
 
-  const data = await res.json();
-
-  if (res.ok) {
-    alert("Login successful!");
-    router.push("/home");
-  } else {
-    alert(data.error || "Login failed");
-  }
-};
-
-
+        // Use a timeout to display the message briefly before redirecting
+        setTimeout(() => {
+          if (userRole === 'admin') {
+            router.push('/profile');
+          } else if (userRole === 'member') {
+            router.push('/profile');
+          } else {
+            // Fallback for unknown roles or if role is missing
+            router.push('/profile');
+          }
+        }, 1500); // Redirect after 1.5 seconds
+      } else {
+        setErrorMessage(data.message || "Login failed. Please check your credentials.");
+      }
+    } catch (error: any) {
+      setErrorMessage(error.message || "An unexpected error occurred during login.");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <Box
-    component="main"
-    sx={{
+      component="main"
+      sx={{
         position: "absolute",
         top: 0,
         left: 0,
         width: "100%",
-        height: "110%",
-        background: `url('/bgimage.jpg') center/cover no-repeat`,
+        height: "110%", // Keep this for vertical centering if content is short
+        background: `url('/bgimage.jpg') center/cover no-repeat`, // Ensure /public/bgimage.jpg exists
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         backdropFilter: "blur(8px)",
-    }}
+        // Responsive height adjustment for smaller screens
+        minHeight: { xs: '100vh', sm: 'auto' },
+        py: { xs: 2, sm: 0 } // Add some padding for small screens
+      }}
     >
       <Paper
         elevation={6}
         sx={{
-          width: { xs: "100%", sm: "380px" },
+          width: { xs: "90%", sm: "380px" }, // Adjust width for small screens
           padding: 4,
           borderRadius: 4,
           bgcolor: "rgba(255, 255, 255, 0.85)",
@@ -139,7 +178,7 @@ export default function LoginPage() {
         }}
       >
         <Box display="flex" justifyContent="center" mb={0}>
-          <Image src="/logogym.png" alt="logo" width={140} height={120} />
+          <Image src="/logogym.png" alt="logo" width={140} height={120} /> {/* Ensure /public/logogym.png exists */}
         </Box>
 
         <Typography
@@ -194,25 +233,28 @@ export default function LoginPage() {
                   onMouseDown={handleMouseDownPassword}
                   edge="end"
                 >
-                  {/* You can import and use Visibility icons here */}
+                  {showPassword ? <VisibilityOff /> : <Visibility />} {/* Use Visibility icons here */}
                 </IconButton>
               ),
             }}
           />
 
           {errorMessage && (
-            <div style={errorMessageStyle}>{errorMessage}</div>
+            <Typography sx={errorMessageStyle}>{errorMessage}</Typography>
+          )}
+          {successMessage && ( // Display success message
+            <Typography sx={successMessageStyle}>{successMessage}</Typography>
           )}
 
           <Button
             variant="contained"
             color="primary"
             fullWidth
-            disabled={buttonDisabled}
+            disabled={buttonDisabled || loading}
             type="submit"
             sx={{ mt: 2, fontWeight: "bold", py: 1.5 }}
           >
-            Submit
+            {loading ? "Loading..." : "Submit"}
           </Button>
         </form>
 
@@ -269,3 +311,9 @@ export default function LoginPage() {
     </Box>
   );
 }
+
+// setLoading is now handled by useState above, so this function is no longer needed.
+function setLoading(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}
+

@@ -26,3 +26,13 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
+
+// Admin User:
+
+// Email: admin@example.com
+// Password: adminpassword
+// Member User:
+
+// Email: member@example.com
+// Password: memberpassword
