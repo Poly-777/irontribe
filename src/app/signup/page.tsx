@@ -107,7 +107,7 @@ export default function SignupPage() {
         localStorage.setItem("emailid", user.emailid || "");
         localStorage.setItem("mobile", user.mobile || "");
         localStorage.setItem("name", user.name || "");
-        router.push("/home");
+        router.push("/profile");
       } else if (data.status === 400) {
         router.push("/signup");
       } else if (data.status === 500) {

@@ -12,7 +12,7 @@ export async function GET(request: Request) {
     console.error('Error fetching schedules:', error);
     return NextResponse.json({ message: 'Internal Server Error', details: error.message }, { status: 500 });
   }
-}
+} 
 
 // POST: Create a new schedule
 export async function POST(request: Request) {
