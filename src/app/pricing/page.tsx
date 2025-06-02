@@ -6,7 +6,7 @@ import { Box, Typography, Grid, Card, CardContent, Button } from "@mui/material"
   const plans = [
   {
     title: "Starter Plan",
-    price: "₹499",
+    price: "499",
     duration: "per month",
     features: [
       "Limited workout access",
@@ -16,7 +16,7 @@ import { Box, Typography, Grid, Card, CardContent, Button } from "@mui/material"
   },
   {
     title: "Monthly Plan",
-    price: "₹999",
+    price: "999",
     duration: "per month",
     features: [
       "Access to all workouts",
@@ -26,7 +26,7 @@ import { Box, Typography, Grid, Card, CardContent, Button } from "@mui/material"
   },
   {
     title: "6-Month Plan",
-    price: "₹4999",
+    price: "4999",
     duration: "every 6 months",
     features: [
       "Customized workout plans",
@@ -37,7 +37,7 @@ import { Box, Typography, Grid, Card, CardContent, Button } from "@mui/material"
   },
   {
     title: "12-Month Plan",
-    price: "₹8999",
+    price: "8999",
     duration: "every year",
     features: [
       "1-on-1 monthly coaching call",
@@ -47,7 +47,7 @@ import { Box, Typography, Grid, Card, CardContent, Button } from "@mui/material"
   },
   {
     title: "Elite Plan",
-    price: "₹14,999",
+    price: "14999",
     duration: "every year",
     features: [
       "All 12-month features",
@@ -62,7 +62,10 @@ export default function PricingPage() {
 
   const handleChoosePlan = (plan: any) => {
     // Navigate to /payment with query params
-    router.push(`/payment?title=${encodeURIComponent(plan.title)}&price=${plan.price}`);
+router.push(
+  `/payment?title=${encodeURIComponent(plan.title)}&price=${encodeURIComponent(plan.price)}&duration=${encodeURIComponent(plan.duration || "N/A")}`
+);
+
   };
 
   return (
@@ -95,7 +98,7 @@ export default function PricingPage() {
                   {plan.title}
                 </Typography>
                 <Typography variant="h4" fontWeight="bold" color="error">
-                  {plan.price}
+                  ₹{plan.price}
                 </Typography>
                 <Typography variant="subtitle1" mb={2}>
                   {plan.duration}

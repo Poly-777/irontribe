@@ -104,7 +104,7 @@ const handleLogin = async (e: React.FormEvent) => {
   const data = await res.json();
 
   if (res.ok) {
-    // Store in sessionStorage
+    localStorage.setItem("emailid", user.emailid || "");
     sessionStorage.setItem("session_user", JSON.stringify(data.session));
     localStorage.setItem("emailid", user.emailid || "");
     localStorage.setItem("name", user.name || "");
@@ -241,9 +241,6 @@ const handleLogin = async (e: React.FormEvent) => {
           }}
           onClick={() => router.push("/admin-login")}
         >
-
-          <Google sx={{ mr: 1 }} />
-          <span style={{ fontWeight: 500 }}>Sign in with Google</span>
           Login as Admin
 
         </Button>
