@@ -105,9 +105,9 @@ const handleLogin = async (e: React.FormEvent) => {
 
   if (res.ok) {
     localStorage.setItem("emailid", user.emailid || "");
-    sessionStorage.setItem("session_user", JSON.stringify(data.session));
     localStorage.setItem("emailid", user.emailid || "");
-    localStorage.setItem("name", user.name || "");
+    sessionStorage.setItem("session_userLogin", JSON.stringify(data.session));
+  
 
     alert("Login successful!");
     router.push("/home");
