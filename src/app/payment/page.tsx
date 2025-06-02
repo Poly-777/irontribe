@@ -27,11 +27,19 @@ export default function PaymentPage() {
   const [paid, setPaid] = useState(false);
 
 
-  const handlePayment = async () => {
+const handlePayment = async () => {
   setLoading(true);
 
   try {
-    const res = await fetch("/api/auth/payment", {
+    // 1. Load Razorpay script
+    const res = await loadRazorpayScript();
+    if (!res) {
+      alert("Failed to load Razorpay SDK. Check your connection.");
+      return;
+    }
+
+    // 2. Call your backend to create an order
+    const paymentRes = await fetch("/api/auth/payment", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,20 +47,55 @@ export default function PaymentPage() {
       body: JSON.stringify({ title, price, duration }),
     });
 
-    const data = await res.json();
+    const { order, key } = await paymentRes.json();
 
-    if (res.ok) {
-      setPaid(true);
-    } else {
-      alert(data.error || "Failed to store payment.");
-    }
+    // 3. Create Razorpay payment options
+    const options = {
+      key: key, // Razorpay key_id
+      amount: order.amount,
+      currency: "INR",
+      name: "IronTribe",
+      description: `Payment for ${title}`,
+      order_id: order.id,
+      handler: function (response: any) {
+        alert("Payment successful!");
+        console.log(response);
+        setPaid(true);
+      },
+      prefill: {
+        name: "Test User",
+        email: "test@example.com",
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+
+    // 4. Open Razorpay modal
+    const rzp = new (window as any).Razorpay(options);
+    rzp.open();
   } catch (err) {
     console.error("Payment error:", err);
-    alert("An error occurred while saving the payment.");
+    alert("Something went wrong during payment.");
   } finally {
     setLoading(false);
   }
 };
+
+const loadRazorpayScript = (): Promise<boolean> => {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") return resolve(false);
+    if ((window as any).Razorpay) return resolve(true);
+
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+};
+
+
 
   return (
     <Box
