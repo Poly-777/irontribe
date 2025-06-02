@@ -417,11 +417,7 @@ export default function AdminDashboard() {
         )}
 
         {activeTab === "attendance" && <AttendanceTab users={users} setUsers={setUsers} />}
-<<<<<<< HEAD
-        {activeTab === "payments" && <PaymentsTab  users={users} setUsers={setUsers} />}
-=======
         {activeTab === "payments" && <PaymentsTab/>}
->>>>>>> 5fa8a8a79c85a49e2f91873f6c5ec9cf06aa17b6
         {activeTab === "settings" && (
           <Box>
             <Typography variant="h5" fontWeight="bold">

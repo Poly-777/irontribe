@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import React from "react";
-import { Box, Typography, Paper, Table, TableHead, TableRow, TableCell, TableBody, Chip } from "@mui/material";
-import { useEffect, useState } from "react";
-=======
 "use client";
 import React, { useState } from "react";
 import {
@@ -24,7 +19,6 @@ import {
 import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import CancelIcon from "@mui/icons-material/Cancel";
 import TodayIcon from "@mui/icons-material/Today";
->>>>>>> 5fa8a8a79c85a49e2f91873f6c5ec9cf06aa17b6
 
 // Mock data
 const initialUsers = [
@@ -64,25 +58,6 @@ function getPaymentForDate(user: typeof initialUsers[0], date: string) {
 }
 
 export default function PaymentTab() {
-<<<<<<< HEAD
-  const [users, setUsers] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
- useEffect(() => {
-    async function fetchUsers() {
-      try {
-        const res = await fetch("/api/auth/users");
-        if (!res.ok) throw new Error("Failed to fetch users");
-        const data = await res.json();
-        setUsers(data);
-      } catch (error) {
-        console.error("Fetch users error:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchUsers();
-  }, []);
-=======
   const [users, setUsers] = useState(initialUsers);
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().slice(0, 10)
@@ -110,7 +85,6 @@ export default function PaymentTab() {
       )
     );
   };
->>>>>>> 5fa8a8a79c85a49e2f91873f6c5ec9cf06aa17b6
 
   return (
     <Box>
@@ -142,60 +116,6 @@ export default function PaymentTab() {
       </Paper>
 
       <Paper sx={{ p: { xs: 1, sm: 2 } }}>
-<<<<<<< HEAD
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              {/* <TableCell>Plan</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell>Date</TableCell> */}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {
-              users.map((user) => (
-                <TableRow key={user.id}>
-                  <TableCell>{user.name}</TableCell>
-                  {/* <TableCell>{user.plan}</TableCell> */}
-                  {/* <TableCell>
-                    <Chip
-                      // label={user.status}
-                      color={
-                        user.status === "Paid"
-                          ? "success"
-                          : user.status === "Pending"
-                          ? "warning"
-                          : "error"
-                      }
-                    />
-                  </TableCell>
-                  <TableCell>{new Date(user.date).toLocaleDateString()}</TableCell> */}
-                </TableRow>
-              ))
-            }
-            {/* {payments.map((p) => (
-              <TableRow key={p.id}>
-                <TableCell>{p.name}</TableCell>
-                <TableCell>{p.plan}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={p.status}
-                    color={
-                      p.status === "Paid"
-                        ? "success"
-                        : p.status === "Pending"
-                        ? "warning"
-                        : "error"
-                    }
-                  />
-                </TableCell>
-                <TableCell>{p.date}</TableCell>
-              </TableRow>
-            ))} */}
-          </TableBody>
-        </Table>
-=======
         <Box sx={{ width: "100%", overflowX: "auto" }}>
           <TableContainer>
             <Table size={isMobile ? "small" : "medium"}>
@@ -266,7 +186,6 @@ export default function PaymentTab() {
             </Table>
           </TableContainer>
         </Box>
->>>>>>> 5fa8a8a79c85a49e2f91873f6c5ec9cf06aa17b6
       </Paper>
     </Box>
   );
