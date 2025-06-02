@@ -17,8 +17,8 @@ export default function ContactUsPage() {
     name: '',
     email: '',
     message: '',
-  });
-
+  }); 
+ 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 

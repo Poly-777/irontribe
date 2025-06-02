@@ -10,6 +10,7 @@ import {
   Button,
 } from '@mui/material';
 import { useState } from 'react';
+import { useRouter } from "next/navigation";
 
 const mockTrainers = [
   { trainerid: 1, name: 'Diganta' },
@@ -28,10 +29,10 @@ const timeSlots = [
 
 export default function ScheduleForm() {
   const [trainers] = useState(mockTrainers);
-
+ const router = useRouter();
   const [form, setForm] = useState({
     memberid: '',
-    trainerid: '',
+    trainerName: '',
     dayofweek: '',
     timeslot: '',
   });
@@ -40,15 +41,44 @@ export default function ScheduleForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Submitting Schedule:', form);
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  const res = await fetch('/api/auth/schedules', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      trainerName: form.trainerName, // This must be the trainer name
+      dayofweek: form.dayofweek,
+      timeslot: form.timeslot,
+    }),
+  });
+  try {
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || 'Failed to create schedule');
+    }
 
-    // Your fetch or backend call here
+    // If the response is ok, we can assume the schedule was created successfully
+    const data = await res.json();
+    console.log('Schedule created:', data);
 
-    setForm({ memberid: '', trainerid: '', dayofweek: '', timeslot: '' });
-    alert('Schedule created successfully!');
-  };
+    // Reset form state
+    setForm({
+      memberid: '',
+      trainerName: '',
+      dayofweek: '',
+      timeslot: '',
+    });
+    router.push("/profile");
+
+  } catch (error) {
+    console.error('Error creating schedule:', error);
+    alert(`Error: ${error.message}`);
+  }
+};
+
 
   return (
     <Box
@@ -97,15 +127,15 @@ export default function ScheduleForm() {
             <TextField
               select
               label="Trainer"
-              name="trainerid"
+              name="trainerName"
               fullWidth
-              required
-              value={form.trainerid}
+              required 
+              value={form.trainerName}
               onChange={handleChange}
               margin="normal"
             >
               {trainers.map((t) => (
-                <MenuItem key={t.trainerid} value={t.trainerid}>
+                <MenuItem key={t.trainerid} value={t.name}>
                   {t.name}
                 </MenuItem>
               ))}
