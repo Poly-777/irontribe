@@ -268,21 +268,23 @@ export default function AdminDashboard() {
       </Box>
       <List>
         {sidebarItems.map((item) => (
-          <ListItem
-            button
-            key={item.value}
-            selected={activeTab === item.value}
-            onClick={() => {
-              setActiveTab(item.value);
-              setMobileOpen(false);
-            }}
-            sx={{
-              bgcolor: activeTab === item.value ? "primary.light" : "inherit",
-              color: activeTab === item.value ? "primary.main" : "inherit",
-              borderRadius: 1,
-              mb: 0.5,
-            }}
-          >
+<ListItem
+  button
+  key={item.value}
+  selected={activeTab === item.value}
+  onClick={() => {
+    setActiveTab(item.value);
+    setMobileOpen(false);
+  }}
+  sx={{
+    bgcolor: activeTab === item.value ? "primary.light" : "inherit",
+    color: activeTab === item.value ? "primary.main" : "inherit",
+    borderRadius: 1,
+    mb: 0.5,
+    cursor: "pointer", // Add this line
+  }}
+>
+
             <ListItemText primary={item.label} />
           </ListItem>
         ))}
@@ -415,7 +417,11 @@ export default function AdminDashboard() {
         )}
 
         {activeTab === "attendance" && <AttendanceTab users={users} setUsers={setUsers} />}
+<<<<<<< HEAD
         {activeTab === "payments" && <PaymentsTab  users={users} setUsers={setUsers} />}
+=======
+        {activeTab === "payments" && <PaymentsTab/>}
+>>>>>>> 5fa8a8a79c85a49e2f91873f6c5ec9cf06aa17b6
         {activeTab === "settings" && (
           <Box>
             <Typography variant="h5" fontWeight="bold">
