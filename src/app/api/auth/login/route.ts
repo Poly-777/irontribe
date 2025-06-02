@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 
 // You should keep this secret safe in .env.local
-const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function POST(req: NextRequest) {
   const { emailid, password } = await req.json();
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   const user = result.rows[0];
 
   if (!user) {
-    return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
+    return NextResponse.json({ error: "User not found!" }, { status: 401 });
   }
 
   const match = await bcrypt.compare(password, user.password);

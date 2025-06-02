@@ -86,25 +86,57 @@ export default function AdminLoginPage() {
     event.preventDefault();
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (
-      admin.emailid === "admin@example.com" &&
-      admin.password === "Admin@123"
-    ) {
-      localStorage.setItem("admin", "true");
-      router.push("/admin-dashboard");
-    } else {
-      setErrorMessage("Invalid admin credentials. Please try again.");
+const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+
+  try {
+    const res = await fetch("/api/auth/admin-login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        emailid: admin.emailid,
+        password: admin.password,
+      }),
+    });
+
+    const data = await res.json();
+    console.log("Login response:", data);
+
+    if (!res.ok) {
+      throw new Error(data.error || "Login failed");
     }
-  };
+
+    const session = data.session;
+    if (!session || !session.id || !session.emailid || !session.name) {
+      throw new Error("Invalid session data received from server.");
+    }
+
+    // Store in sessionStorage and localStorage
+    sessionStorage.setItem("session_admin", JSON.stringify(session));
+    localStorage.setItem("id", session.id);
+    localStorage.setItem("emailid", session.emailid);
+    localStorage.setItem("name", session.name);
+
+    console.log("Session data stored successfully:", session);
+
+    alert("Login successful!");
+    router.push("/admin-dashboard");
+  } catch (error: any) {
+    console.error("Login error:", error);
+    setErrorMessage(error.message || "Something went wrong");
+  }
+};
+
+
 
   const errorMessageStyle = {
     color: "red",
     marginTop: "10px",
     fontSize: "0.85rem",
   };
-
+ 
   return (
     <Box
       component="main"
@@ -231,3 +263,4 @@ export default function AdminLoginPage() {
     </Box>
   );
 }
+

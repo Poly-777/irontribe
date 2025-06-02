@@ -110,7 +110,7 @@ const handleLogin = async (e: React.FormEvent) => {
     localStorage.setItem("name", user.name || "");
 
     alert("Login successful!");
-    router.push("/profile");
+    router.push("/home");
   } else {
     alert(data.error || "Login failed");
   }

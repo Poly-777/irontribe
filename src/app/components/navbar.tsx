@@ -78,7 +78,14 @@ const handleLogout = async () => {
     console.error("Logout failed:", error);
   }
   }
-
+// Handle for checking login status
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+    
+    useEffect(() => {
+      const session =
+        localStorage.getItem('session_user') || sessionStorage.getItem('session_user');
+      setIsLoggedIn(!!session);
+    }, []);
 
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
@@ -177,7 +184,7 @@ const handleLogout = async () => {
           </Box>
 
           {/* Avatar Dropdown */}
-          <Box sx={{ ml: 2, position: 'relative' }}>
+          {isLoggedIn === true && ( <Box sx={{ ml: 2, position: 'relative' }}>
             <ClickAwayListener onClickAway={handleDropdownClose}>
               <Box>
                 <IconButton onClick={handleDropdownToggle} ref={dropdownRef}>
@@ -275,7 +282,8 @@ const handleLogout = async () => {
                 )}
               </Box>
             </ClickAwayListener>
-          </Box>
+          </Box>)}
+         
         </Toolbar>
       </AppBar>
 

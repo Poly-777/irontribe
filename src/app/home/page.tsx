@@ -1,8 +1,20 @@
 'use client';
 import React from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+
+
 
 export default function HomePage() {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
+  
+  useEffect(() => {
+    const session =
+      localStorage.getItem('session_user') || sessionStorage.getItem('session_user');
+    setIsLoggedIn(!!session);
+  }, []);
+  const router = useRouter();
   return (
     <>
       <Box
@@ -38,10 +50,11 @@ export default function HomePage() {
           <Typography variant="h5" sx={{ mb: 4 }}>
             Join the ultimate training experience
           </Typography>
-          <Button
+          {isLoggedIn === false && (<Button
             variant="contained"
             color="primary"
             size="large"
+            onClick={() => router.push('/login')}
             sx={{
               fontWeight: 'bold',
               bgcolor: '#f44336',
@@ -49,7 +62,8 @@ export default function HomePage() {
             }}
           >
             Join Now
-          </Button>
+          </Button>)}
+          
         </Container>
       </Box>
 
@@ -133,20 +147,23 @@ export default function HomePage() {
       </Box>
 
       {/* Call to Action */}
-      <Box sx={{ py: 6, textAlign: 'center', backgroundColor: '#f44336', color: '#fff' }}>
-        <Container>
-          <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
-            Ready to Transform Your Body?
-          </Typography>
-          <Button
-            variant="contained"
-            size="large"
-            sx={{ bgcolor: '#fff', color: '#f44336', fontWeight: 'bold' }}
-          >
-            Get Your Free Trial
-          </Button>
-        </Container>
-      </Box>
+      {isLoggedIn === false && (
+        <Box sx={{ py: 6, textAlign: 'center', backgroundColor: '#f44336', color: '#fff' }}>
+          <Container>
+            <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2 }}>
+              Ready to Transform Your Body?
+            </Typography>
+            <Button
+              variant="contained"
+              size="large"
+              onClick={() => router.push('/pricing')}
+              sx={{ bgcolor: '#fff', color: '#f44336', fontWeight: 'bold' }}
+            >
+              See the pricing plans
+            </Button>
+          </Container>
+        </Box>
+      )}
     </>
   );
 }
