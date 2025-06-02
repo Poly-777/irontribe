@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.6.0",
-    "@auth0/nextjs-auth0": "^4.6.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^7.0.2",
@@ -27,8 +26,10 @@
     "next-auth": "^4.24.11",
     "nodemailer": "^6.10.1",
     "pg": "^8.16.0",
+    "razorpay": "^2.9.6",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "resend": "^4.5.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

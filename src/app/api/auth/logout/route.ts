@@ -13,7 +13,10 @@ export async function POST() {
   //   path: "/",
   // });
   const cookieStore = await cookies();
-  cookieStore.delete('session_user');
+  cookieStore.delete('session_user'); 
 
-  return NextResponse.json({ message: "Logout successful" });
+  return NextResponse.json({ 
+    message: "Logout successful",
+    clearLocalStorage: true 
+  });
 }

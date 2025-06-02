@@ -8,7 +8,7 @@ import {
   Button,
   Grid,
   Paper,
-  Stack,
+  Stack, 
 } from '@mui/material';
 import { Phone, Email, LocationOn } from '@mui/icons-material';
 
@@ -30,17 +30,33 @@ export default function ContactUsPage() {
     }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
+  // Update your handleSubmit function in page.tsx
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
 
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setIsSuccess(true);
-      setFormData({ name: '', email: '', message: '' });
-    }, 2000);
-  };
+  try {
+    const response = await fetch('/api/auth/contact', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
 
+    if (!response.ok) {
+      throw new Error('Failed to send message');
+    }
+
+    setIsSuccess(true);
+    setFormData({ name: '', email: '', message: '' });
+  } catch (error) {
+    console.error('Error:', error);
+    // You might want to show an error message to the user
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   return (
     <>
       <Box

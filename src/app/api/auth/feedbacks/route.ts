@@ -10,4 +10,4 @@ export async function GET(request: Request) {
     console.error('Error fetching feedbacks:', error);
     return NextResponse.json({ message: 'Internal Server Error', details: error.message }, { status: 500 });
   }
-}
+} 

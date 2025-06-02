@@ -20,7 +20,8 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import Image from 'next/image';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+
 
 const navItems = ['Home', 'About', 'Gallery', 'pricing', 'Trainers', 'Contact'];
 
@@ -29,6 +30,7 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
   const dropdownRef = useRef(null);
+  const router = useRouter();
 
   // New state for user info
   const [userName, setUserName] = useState('');
@@ -56,21 +58,26 @@ export default function Navbar() {
   };
 
 const handleLogout = async () => {
-  try {
-    // Call logout API to clear cookie
-    await fetch("/api/auth/logout", {
-      method: "POST",
-    });
-
-    // Clear session storage
-    sessionStorage.removeItem("session_user");
-
-    // Optional: redirect to login/home page
-    window.location.href = "/login";
-  } catch (error) {
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      
+      const result = await response.json();
+       // Clear session storage
+      sessionStorage.removeItem("session_user");
+        if (result.clearLocalStorage) {
+        // Clear all localStorage items
+        localStorage.clear();
+        // Or target specific items:
+        // localStorage.removeItem('userData');
+      }
+      router.push('/login');
+      router.refresh(); // Clear client cache
+    } catch (error) {
     console.error("Logout failed:", error);
   }
-};
+  }
 
 
   const drawer = (
