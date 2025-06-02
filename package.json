@@ -28,7 +28,8 @@
     "pg": "^8.16.0",
     "razorpay": "^2.9.6",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "resend": "^4.5.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

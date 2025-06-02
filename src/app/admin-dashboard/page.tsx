@@ -232,10 +232,26 @@ export default function AdminDashboard() {
     );
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin");
-    router.push("/admin-login");
-  };
+ const handleLogout = async () => {
+    try {
+      const response = await fetch('/api/auth/admin-logout', {
+        method: 'POST',
+      });
+      
+      const result = await response.json();
+       // Clear session storage
+      sessionStorage.removeItem("session_admin");
+        if (result.clearLocalStorage) {
+        // Clear all localStorage items
+        localStorage.clear();
+      }
+      alert("Logout successful!");
+      router.push('/admin-login');
+      router.refresh(); // Clear client cache
+    } catch (error) {
+    console.error("Logout failed:", error);
+  }
+  }
 
   const filteredUsers = users.filter((user) =>
     user.name.toLowerCase().includes(search.toLowerCase())

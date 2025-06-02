@@ -50,6 +50,8 @@ const initialUsers = [
     ],
   },
 ];
+ 
+
 
 function getPaymentForDate(user: typeof initialUsers[0], date: string) {
   return user.paymentStatus.find((p) => p.date === date)?.paid ?? false;
