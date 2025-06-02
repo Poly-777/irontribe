@@ -21,19 +21,38 @@ export default function PaymentPage() {
 
   const title = searchParams.get("title");
   const price = searchParams.get("price");
+  const duration = searchParams.get("duration");
 
   const [loading, setLoading] = useState(false);
   const [paid, setPaid] = useState(false);
 
+
   const handlePayment = async () => {
-    setLoading(true);
-    console.log("handlepayment clicked");
-    // Simulate payment process (replace with real API like Razorpay/Stripe)
-    setTimeout(() => {
-      setLoading(false);
+  setLoading(true);
+
+  try {
+    const res = await fetch("/api/auth/payment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ title, price, duration }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
       setPaid(true);
-    }, 2000);
-  };
+    } else {
+      alert(data.error || "Failed to store payment.");
+    }
+  } catch (err) {
+    console.error("Payment error:", err);
+    alert("An error occurred while saving the payment.");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Box
