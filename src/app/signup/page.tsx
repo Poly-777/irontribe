@@ -275,21 +275,6 @@ export default function SignupPage() {
           or sign up with
         </Typography>
 
-        <Button
-          variant="contained"
-          fullWidth
-          sx={{
-            mt: 2,
-            backgroundColor: "#000000",
-            "&:hover": { backgroundColor: "#808080" },
-            textTransform: "none",
-            fontWeight: 500,
-          }}
-          >
-          <Google sx={{ mr: 1 }} />
-          Sign up with Google
-        </Button>
-
         <Box textAlign="center" mt={3}>
           <Typography variant="body2">
             Already have an account?{" "}

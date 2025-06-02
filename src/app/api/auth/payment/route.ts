@@ -1,38 +1,48 @@
-// app/api/payment/route.ts (or route.js for JS)
 import { NextRequest, NextResponse } from "next/server";
+import Razorpay from "razorpay";
 import { pool } from "../../../lib/db";
 
-// POST /api/payment
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID || "",
+  key_secret: process.env.RAZORPAY_KEY_SECRET || "",
+});
+
+
 export async function POST(req: NextRequest) {
   try {
-    const { title, price, duration } = await req.json();
+    const { title } = await req.json();
 
-    if (!title || !price || !duration) {
-      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
+    if (!title) {
+      return NextResponse.json({ error: "Missing title" }, { status: 400 });
     }
 
     const result = await pool.query(
-      `INSERT INTO Plan (title, price, duration) VALUES ($1, $2, $3) RETURNING *`,
-      [title, price, duration]
+      `SELECT * FROM Plan WHERE title = $1`,
+      [title]
     );
 
-    return NextResponse.json(
-      { message: "Payment recorded", data: result.rows[0] },
-      { status: 201 }
-    );
+    const plan = result.rows[0];
+
+    if (!plan) {
+      return NextResponse.json({ error: "Plan not found" }, { status: 404 });
+    }
+
+    const order = await razorpay.orders.create({
+      amount: plan.price * 100, // amount in paise
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+    });
+
+    return NextResponse.json({
+      key: process.env.RAZORPAY_KEY_ID,
+      order: {
+        id: order.id,
+        amount: order.amount,
+        currency: order.currency,
+      },
+    });
   } catch (err) {
     console.error("Payment API error:", err);
-    return NextResponse.json({ error: "Database error" }, { status: 500 });
-  }
-}
-
-// Optional: GET all payments (for admin/debug)
-export async function GET() {
-  try {
-    const result = await pool.query("SELECT * FROM payments ORDER BY paid_at DESC");
-    return NextResponse.json({ data: result.rows }, { status: 200 });
-  } catch (err) {
-    console.error("Fetch payments error:", err);
-    return NextResponse.json({ error: "Database error" }, { status: 500 });
+    return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }
