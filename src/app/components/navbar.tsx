@@ -55,6 +55,24 @@ export default function Navbar() {
     setDropdownOpen(false);
   };
 
+const handleLogout = async () => {
+  try {
+    // Call logout API to clear cookie
+    await fetch("/api/auth/logout", {
+      method: "POST",
+    });
+
+    // Clear session storage
+    sessionStorage.removeItem("session_user");
+
+    // Optional: redirect to login/home page
+    window.location.href = "/login";
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
+};
+
+
   const drawer = (
     <Box onClick={handleDrawerToggle} sx={{ textAlign: 'center' }}>
       <Typography variant="h6" sx={{ my: 2 }}>
@@ -240,6 +258,7 @@ export default function Navbar() {
                         onClick={() => {
                           alert('Logging out...');
                           handleDropdownClose();
+                          handleLogout();
                         }}
                       >
                         Logout
